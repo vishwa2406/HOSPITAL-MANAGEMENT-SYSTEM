@@ -6,11 +6,11 @@ import { motion } from "framer-motion";
 import heroImg from "@/assets/hero-hospital.jpg";
 import { useState } from "react";
 
-export default function HeroSection() {
+export default function HeroSection({ id }) {
   const navigate = useNavigate();
   const [emergencyOpen, setEmergencyOpen] = useState(false);
   return (
-    <section className="relative min-h-[700px] flex items-center overflow-hidden">
+    <section id={id} className="relative min-h-[700px] flex items-center overflow-hidden">
       <div className="absolute inset-0">
         <motion.img 
           initial={{ scale: 1.1 }}

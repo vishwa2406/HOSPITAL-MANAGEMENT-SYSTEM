@@ -4,6 +4,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/services/api";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Link } from "react-router-dom";
+import { MessageSquare } from "lucide-react";
 
 const isPastAppointment = (dateStr, timeStr) => {
   const timeMatch = timeStr?.match(/(\d+):(\d+)\s*(AM|PM)/i);
@@ -90,6 +92,11 @@ export default function DoctorAppointments() {
                     )}
                     {a.status === "approved" && (
                       <div className="flex gap-2">
+                        <Link to={`/chat/${a._id}`}>
+                          <Button size="sm" variant="outline" className="h-8 text-xs border-primary/20 text-primary hover:bg-primary/5">
+                            <MessageSquare className="h-3 w-3 mr-1" /> Chat
+                          </Button>
+                        </Link>
                         {isPastAppointment(a.date, a.time) ? (
                           <Button size="sm" className="h-8 text-xs bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => updateStatus.mutate({ id: a._id, status: "completed" })}>Complete</Button>
                         ) : (

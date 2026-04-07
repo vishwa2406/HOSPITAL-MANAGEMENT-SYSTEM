@@ -14,7 +14,7 @@ export default function Index() {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <HeroSection />
+      <HeroSection id="hero" />
       <AboutSection />
       <ServicesSection />
       <DoctorsSection />

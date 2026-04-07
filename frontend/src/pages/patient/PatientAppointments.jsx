@@ -2,8 +2,10 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
+import { Link } from "react-router-dom";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Button } from "@/components/ui/button";
+import { MessageSquare } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -114,18 +116,27 @@ export default function PatientAppointments() {
                        </span>
                      </td>
                      <td className="p-3">
-                       {["pending", "approved"].includes(a.status) && !isPastAppointment(a.date, a.time) ? (
-                         <div className="flex gap-2">
-                           <Button size="sm" variant="outline" className="h-8 text-xs hover:bg-muted" onClick={() => setRescheduleData({ id: a._id, date: a.date.split("T")[0], time: a.time })}>
-                             Reschedule
-                           </Button>
-                           <Button size="sm" variant="outline" className="h-8 text-xs text-destructive border-destructive/20 hover:bg-destructive/10" onClick={() => updateStatus.mutate({ id: a._id, status: "cancelled" })}>
-                             Cancel
-                           </Button>
-                         </div>
-                       ) : (
-                         <span className="text-xs text-muted-foreground font-medium">—</span>
-                       )}
+                        <div className="flex gap-2">
+                          {a.status === "approved" && (
+                            <Link to={`/chat/${a._id}`}>
+                              <Button size="sm" variant="outline" className="h-8 text-xs border-primary/20 text-primary hover:bg-primary/5">
+                                <MessageSquare className="h-3 w-3 mr-1" /> Chat
+                              </Button>
+                            </Link>
+                          )}
+                          {["pending", "approved"].includes(a.status) && !isPastAppointment(a.date, a.time) ? (
+                            <div className="flex gap-2">
+                              <Button size="sm" variant="outline" className="h-8 text-xs hover:bg-muted" onClick={() => setRescheduleData({ id: a._id, date: a.date.split("T")[0], time: a.time })}>
+                                Reschedule
+                              </Button>
+                              <Button size="sm" variant="outline" className="h-8 text-xs text-destructive border-destructive/20 hover:bg-destructive/10" onClick={() => updateStatus.mutate({ id: a._id, status: "cancelled" })}>
+                                Cancel
+                              </Button>
+                            </div>
+                          ) : a.status !== "approved" && (
+                            <span className="text-xs text-muted-foreground font-medium">—</span>
+                          )}
+                        </div>
                      </td>
                   </tr>
                 ))

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Phone, Heart } from "lucide-react";
@@ -11,41 +11,67 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const dashboardPath = role === "admin" ? "/admin" : role === "doctor" ? "/doctor" : "/patient";
+  const { pathname } = useLocation();
+
+  const handleNavClick = (e, targetId) => {
+    e.preventDefault();
+    setOpen(false);
+
+    const scrollToSection = () => {
+      if (targetId === "hero") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } else {
+        const element = document.getElementById(targetId);
+        if (element) {
+          const yOffset = -80; // Compensating for navbar height
+          const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+          window.scrollTo({ top: y, behavior: "smooth" });
+        }
+      }
+    };
+
+    if (pathname !== "/") {
+      navigate("/");
+      setTimeout(scrollToSection, 100);
+    } else {
+      scrollToSection();
+    }
+  };
 
   return (
     <nav className="sticky top-0 z-50 transition-all duration-300 bg-background/80 backdrop-blur-lg border-b border-border shadow-sm">
       <div className="container mx-auto px-4 flex items-center justify-between h-20">
-        <Link to="/" className="flex items-center gap-2 group">
+        <a href="/" onClick={(e) => handleNavClick(e, "hero")} title="Home" className="flex items-center gap-2 group cursor-pointer">
           <div className="bg-primary p-1.5 rounded-xl group-hover:scale-110 transition-transform shadow-lg shadow-primary/20">
             <Heart className="h-6 w-6 text-white" />
           </div>
           <span className="text-2xl font-bold tracking-tight text-foreground">
             LIO<span className="text-primary">HNS</span>
           </span>
-        </Link>
+        </a>
 
         <div className="hidden md:flex items-center gap-8">
-          <Link to="/" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors relative group">
+          <a href="/" onClick={(e) => handleNavClick(e, "hero")} className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors relative group cursor-pointer">
             Home
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
-          </Link>
-          <a href="/#about" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors relative group">
+          </a>
+          <a href="/#about" onClick={(e) => handleNavClick(e, "about")} className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors relative group cursor-pointer">
             About
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
           </a>
-          <a href="/#services" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors relative group">
+          <a href="/#services" onClick={(e) => handleNavClick(e, "services")} className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors relative group cursor-pointer">
             Services
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
           </a>
-          <a href="/#doctors" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors relative group">
+          <a href="/#doctors" onClick={(e) => handleNavClick(e, "doctors")} className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors relative group cursor-pointer">
             Doctors
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
           </a>
-          <a href="/#blog" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors relative group">
+          <a href="/#blog" onClick={(e) => handleNavClick(e, "blog")} className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors relative group cursor-pointer">
             Blog
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
           </a>
-          <a href="/#contact" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors relative group">
+          <a href="/#contact" onClick={(e) => handleNavClick(e, "contact")} className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors relative group cursor-pointer">
             Contact
             <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
           </a>
@@ -86,10 +112,10 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden bg-background border-b border-border shadow-xl px-4 py-6 space-y-4 animate-in fade-in slide-in-from-top-4">
           <div className="grid grid-cols-2 gap-4">
-            <Link to="/" onClick={() => setOpen(false)} className="px-4 py-2 rounded-lg bg-secondary text-sm font-medium text-foreground hover:bg-primary/10 transition-colors">Home</Link>
-            <a href="/#about" onClick={() => setOpen(false)} className="px-4 py-2 rounded-lg bg-secondary text-sm font-medium text-foreground hover:bg-primary/10 transition-colors">About</a>
-            <a href="/#services" onClick={() => setOpen(false)} className="px-4 py-2 rounded-lg bg-secondary text-sm font-medium text-foreground hover:bg-primary/10 transition-colors">Services</a>
-            <a href="/#doctors" onClick={() => setOpen(false)} className="px-4 py-2 rounded-lg bg-secondary text-sm font-medium text-foreground hover:bg-primary/10 transition-colors">Doctors</a>
+            <a href="/" onClick={(e) => handleNavClick(e, "hero")} className="px-4 py-2 rounded-lg bg-secondary text-sm font-medium text-foreground hover:bg-primary/10 transition-colors">Home</a>
+            <a href="/#about" onClick={(e) => handleNavClick(e, "about")} className="px-4 py-2 rounded-lg bg-secondary text-sm font-medium text-foreground hover:bg-primary/10 transition-colors">About</a>
+            <a href="/#services" onClick={(e) => handleNavClick(e, "services")} className="px-4 py-2 rounded-lg bg-secondary text-sm font-medium text-foreground hover:bg-primary/10 transition-colors">Services</a>
+            <a href="/#doctors" onClick={(e) => handleNavClick(e, "doctors")} className="px-4 py-2 rounded-lg bg-secondary text-sm font-medium text-foreground hover:bg-primary/10 transition-colors">Doctors</a>
           </div>
           <div className="pt-4 border-t border-border flex flex-col gap-3">
             {user ? (

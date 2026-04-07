@@ -12,6 +12,7 @@ import ServiceDetail from "./pages/ServiceDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
+import ChatPage from "./pages/ChatPage";
 import PatientDashboard from "./pages/patient/PatientDashboard";
 import BookAppointment from "./pages/patient/BookAppointment";
 import PatientAppointments from "./pages/patient/PatientAppointments";
@@ -63,6 +64,8 @@ function AppRoutes() {
       <Route path="/doctor" element={<ProtectedRoute allowedRoles={["doctor"]}><DoctorDashboard /></ProtectedRoute>} />
       <Route path="/doctor/appointments" element={<ProtectedRoute allowedRoles={["doctor"]}><DoctorAppointments /></ProtectedRoute>} />
       <Route path="/doctor/profile" element={<ProtectedRoute allowedRoles={["doctor"]}><DoctorProfile /></ProtectedRoute>} />
+      
+      <Route path="/chat/:appointmentId" element={<ProtectedRoute allowedRoles={["patient", "doctor"]}><ChatPage /></ProtectedRoute>} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>

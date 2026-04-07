@@ -54,14 +54,14 @@ export default function ContactSection() {
               </div>
               <div>
                 <h4 className="font-semibold text-foreground">Address</h4>
-                <p className="text-sm text-muted-foreground">123 Health Street, Medical City</p>
-                <p className="text-sm text-muted-foreground">New Delhi, India - 110001</p>
+                <p className="text-sm text-muted-foreground">Sarva Mangal Hall, Besides Swami Vivekananda Road</p>
+                <p className="text-sm text-muted-foreground">Chowk, Memnagar, Ahmedabad, Gujarat 380052</p>
               </div>
             </div>
 
             <div className="mt-8 rounded-xl overflow-hidden border border-border shadow-sm h-64">
               <iframe 
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d112114.73351980862!2d77.10091873278912!3d28.582496735502758!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d1d11f7c83f91%3A0x868351bfa7ea75e!2sNew%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1714486337894!5m2!1sen!2sin" 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d29369.976623375507!2d72.50462553371011!3d23.05140158541038!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e84a43f4d1dff%3A0x31ca9185afd4b66f!2sLIFE%20CARE%20INSTITUTE%20OF%20HEAD%20AND%20NECK%20SCIENCES%20(LIOHN)!5e0!3m2!1sen!2sin!4v1775578215482!5m2!1sen!2sin" 
                 width="100%" 
                 height="100%" 
                 style={{ border: 0 }} 
