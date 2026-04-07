@@ -40,22 +40,43 @@ export default function Login() {
           <h1 className="text-2xl font-bold text-foreground">Welcome Back</h1>
           <p className="text-sm text-muted-foreground mt-1">Sign in to your account</p>
         </div>
-        <form onSubmit={handleSubmit} className="bg-card p-6 rounded-xl shadow-card border border-border space-y-4">
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="your@email.com" />
+        <form onSubmit={handleSubmit} className="bg-card p-8 rounded-2xl shadow-xl border border-border space-y-6 backdrop-blur-sm bg-card/95">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-medium">Email Address</Label>
+              <Input 
+                id="email" 
+                type="email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)} 
+                required 
+                placeholder="your@email.com"
+                className="rounded-xl border-border bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password" name="password-label" className="text-sm font-medium">Password</Label>
+              <Input 
+                id="password" 
+                type="password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)} 
+                required 
+                placeholder="••••••••"
+                className="rounded-xl border-border bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all"
+              />
+            </div>
           </div>
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••" />
-          </div>
-          <Button type="submit" className="w-full" disabled={loading}>
+          <Button type="submit" className="w-full h-12 rounded-xl font-semibold shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all" disabled={loading}>
             {loading ? "Signing in..." : "Sign In"}
           </Button>
-          <p className="text-center text-sm text-muted-foreground">
-            Don't have an account?{" "}
-            <Link to="/register" className="text-primary hover:underline">Register</Link>
-          </p>
+          <div className="text-center space-y-2">
+            <p className="text-sm text-muted-foreground">
+              Don't have an account?{" "}
+              <Link to="/register" className="text-primary font-semibold hover:underline underline-offset-4">Create an account</Link>
+            </p>
+            <Link to="/" className="text-xs text-muted-foreground hover:text-foreground transition-colors">← Back to Home</Link>
+          </div>
         </form>
       </div>
     </div>

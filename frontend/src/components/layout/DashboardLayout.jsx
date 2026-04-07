@@ -7,6 +7,7 @@ import {
   MessageSquare, Star, HelpCircle, User, LogOut, Heart, Bot, Settings
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import ThemeToggle from "./ThemeToggle";
 
 const patientNav = [
   { label: "Dashboard", path: "/patient", icon: <LayoutDashboard className="h-4 w-4" /> },
@@ -67,10 +68,13 @@ export default function DashboardLayout({ children, role }) {
           ))}
         </nav>
         <div className="p-3 border-t border-border space-y-2">
-          <div className="px-3 py-2 text-sm text-foreground truncate">
-            {user?.fullName || "User"}
+          <div className="flex items-center justify-between px-3 py-1">
+            <span className="text-sm font-medium text-foreground truncate max-w-[150px]">
+              {user?.fullName || "User"}
+            </span>
+            <ThemeToggle />
           </div>
-          <Button variant="ghost" size="sm" className="w-full justify-start gap-2" onClick={() => { signOut(); navigate("/"); }}>
+          <Button variant="ghost" size="sm" className="w-full justify-start gap-2 text-muted-foreground hover:text-foreground" onClick={() => { signOut(); navigate("/"); }}>
             <LogOut className="h-4 w-4" /> Logout
           </Button>
         </div>
