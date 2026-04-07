@@ -27,7 +27,7 @@ export default function FAQSection() {
   const items = faq || fallbackFaq;
 
   return (
-    <section id="faq" className="py-24 bg-white relative">
+    <section id="faq" className="py-24 bg-background relative">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="flex flex-col md:flex-row gap-12 items-start">
           <motion.div 
@@ -39,7 +39,7 @@ export default function FAQSection() {
             <div className="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-primary/10 text-primary mb-6">
               <HelpCircle className="h-6 w-6" />
             </div>
-            <h2 className="text-4xl font-display font-bold text-slate-900 mb-4">Questions? <br />We Have Answers</h2>
+            <h2 className="text-4xl font-display font-bold text-foreground mb-4">Questions? <br />We Have Answers</h2>
             <p className="text-slate-500 mb-8">
               Cannot find what you are looking for? <br />
               <button className="text-primary font-bold hover:underline">Contact our support</button>
@@ -58,12 +58,12 @@ export default function FAQSection() {
                 >
                   <AccordionItem 
                     value={String(f.id || i)} 
-                    className="bg-slate-50 rounded-2xl border-none px-6 hover:bg-slate-100/80 transition-colors data-[state=open]:bg-white data-[state=open]:shadow-lg data-[state=open]:shadow-slate-200/50"
+                    className="bg-muted rounded-2xl border-none px-6 hover:bg-muted/80 transition-colors data-[state=open]:bg-card data-[state=open]:shadow-sm"
                   >
-                    <AccordionTrigger className="text-lg font-bold text-slate-900 hover:no-underline py-6">
+                    <AccordionTrigger className="text-lg font-bold text-foreground hover:no-underline py-6">
                       {f.question}
                     </AccordionTrigger>
-                    <AccordionContent className="text-slate-600 leading-relaxed pb-6 text-base">
+                    <AccordionContent className="text-muted-foreground leading-relaxed pb-6 text-base">
                       {f.answer}
                     </AccordionContent>
                   </AccordionItem>

@@ -56,6 +56,7 @@ export function AuthProvider({ children }) {
       setToken(token);
       setUser(userData);
       setRole(userData.role);
+      return userData;
     } catch (error) {
       throw error.response?.data?.message || "Sign in failed";
     }

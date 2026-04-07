@@ -25,13 +25,13 @@ export default function TestimonialsSection() {
   const items = testimonials || fallbackTestimonials;
 
   return (
-    <section className="py-24 bg-slate-50 relative overflow-hidden">
+    <section className="py-24 bg-muted relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-white to-transparent" />
       
       <div className="container mx-auto px-4 relative z-10">
         <div className="text-center mb-16">
           <span className="text-primary font-bold tracking-widest uppercase text-sm mb-3 block">Real Experiences</span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-slate-900 mb-4">What Our Patients Say</h2>
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">What Our Patients Say</h2>
           <div className="h-1.5 w-20 bg-primary mx-auto rounded-full mb-6" />
         </div>
 
@@ -43,7 +43,7 @@ export default function TestimonialsSection() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="p-8 rounded-3xl bg-white shadow-xl shadow-slate-200/50 border border-slate-100 flex flex-col relative group"
+              className="p-8 rounded-3xl bg-card shadow-sm border border-border flex flex-col relative group"
             >
               <Quote className="absolute top-6 right-8 h-12 w-12 text-slate-50 group-hover:text-primary/10 transition-colors" />
               
@@ -53,14 +53,14 @@ export default function TestimonialsSection() {
                 ))}
               </div>
               
-              <p className="text-slate-600 mb-8 leading-relaxed italic relative z-10">"{t.message}"</p>
+              <p className="text-muted-foreground mb-8 leading-relaxed italic relative z-10">"{t.message}"</p>
               
               <div className="flex items-center gap-4 mt-auto">
                 <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
                   {t.name.charAt(0)}
                 </div>
                 <div>
-                  <p className="font-bold text-slate-900">{t.name}</p>
+                  <p className="font-bold text-foreground">{t.name}</p>
                   <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider">{t.role || "Verified Patient"}</p>
                 </div>
               </div>

@@ -5,6 +5,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import contentRoutes from './routes/content.js';
 import appointmentRoutes from './routes/appointments.js';
+import aiRoutes from './routes/ai.js';
 
 dotenv.config();
 
@@ -18,9 +19,11 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/content', contentRoutes);
 app.use('/api/appointments', appointmentRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Routes Placeholder
 app.get('/', (req, res) => {
+
   res.send('Care Companion API is running...');
 });
 

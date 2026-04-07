@@ -26,12 +26,12 @@ export default function BlogSection() {
   const items = blogs || fallbackBlogs;
 
   return (
-    <section id="blog" className="py-24 bg-slate-50 relative overflow-hidden">
+    <section id="blog" className="py-24 bg-muted relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
             <span className="text-primary font-bold tracking-widest uppercase text-sm mb-3 block">Health Insights</span>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-slate-900 mb-4">Latest From Our Blog</h2>
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">Latest From Our Blog</h2>
             <div className="h-1.5 w-20 bg-primary rounded-full" />
           </div>
           <Button variant="ghost" className="text-primary font-bold hover:bg-primary/5 rounded-full px-6 group">
@@ -47,7 +47,7 @@ export default function BlogSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="rounded-3xl bg-white shadow-xl shadow-slate-200/40 overflow-hidden border border-slate-100 group hover:translate-y-[-8px] transition-all duration-500"
+              className="rounded-3xl bg-card shadow-sm overflow-hidden border border-border group hover:translate-y-[-8px] transition-all duration-500"
             >
               <div className="h-56 bg-slate-200 overflow-hidden relative">
                 <img 
@@ -57,7 +57,7 @@ export default function BlogSection() {
                   loading="lazy" 
                 />
                 <div className="absolute top-4 left-4">
-                   <span className="px-3 py-1 bg-white/90 backdrop-blur-sm rounded-full text-xs font-bold text-primary shadow-sm flex items-center gap-1.5">
+                   <span className="px-3 py-1 bg-background/90 backdrop-blur-sm rounded-full text-xs font-bold text-primary shadow-sm flex items-center gap-1.5">
                      <BookOpen className="h-3 w-3" /> Blog
                    </span>
                 </div>
@@ -72,7 +72,7 @@ export default function BlogSection() {
                   <span className="text-xs font-bold text-slate-300">By {b.author || "Medical Staff"}</span>
                 </div>
                 
-                <h3 className="text-xl font-bold text-slate-900 mb-4 group-hover:text-primary transition-colors line-clamp-2 leading-tight">
+                <h3 className="text-xl font-bold text-foreground mb-4 group-hover:text-primary transition-colors line-clamp-2 leading-tight">
                   {b.title}
                 </h3>
                 

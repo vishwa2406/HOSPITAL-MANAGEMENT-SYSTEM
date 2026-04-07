@@ -26,13 +26,13 @@ export default function DoctorsSection() {
   const items = doctors || fallbackDoctors;
 
   return (
-    <section id="doctors" className="py-24 bg-slate-50/50">
+    <section id="doctors" className="py-24 bg-muted/50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <span className="text-primary font-bold tracking-widest uppercase text-sm mb-3 block">Expert Team</span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold text-slate-900 mb-4">Meet Our Specialists</h2>
+          <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-4">Meet Our Specialists</h2>
           <div className="h-1.5 w-20 bg-primary mx-auto rounded-full mb-6" />
-          <p className="text-slate-600 max-w-2xl mx-auto text-lg">
+          <p className="text-muted-foreground max-w-2xl mx-auto text-lg">
             Our doctors are leaders in their fields, committed to providing 
             personalized and compassionate care to every patient.
           </p>
@@ -42,7 +42,7 @@ export default function DoctorsSection() {
           {items.slice(0, 8).map((d, i) => (
             <div 
               key={d._id || i} 
-              className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-slate-100 flex flex-col h-full"
+              className="group relative bg-card rounded-2xl shadow-sm hover:shadow-xl transition-all duration-500 overflow-hidden border border-border flex flex-col h-full"
             >
               <div className="relative h-64 overflow-hidden">
                 {d.profileImage ? (
@@ -58,14 +58,14 @@ export default function DoctorsSection() {
                   </div>
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                  <Button variant="secondary" className="w-full bg-white/90 backdrop-blur-sm border-none text-slate-900 hover:bg-white">
+                  <Button variant="secondary" className="w-full bg-background/90 backdrop-blur-sm border-none text-foreground hover:bg-background">
                     Book Appointment
                   </Button>
                 </div>
               </div>
               
               <div className="p-6 text-center flex-1 flex flex-col justify-center">
-                <h3 className="text-xl font-bold text-slate-900 group-hover:text-primary transition-colors duration-300">
+                <h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
                   {d.userId?.fullName || "Specialist Doctor"}
                 </h3>
                 <p className="text-primary font-medium text-sm mt-1">{d.specialization}</p>

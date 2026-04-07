@@ -19,9 +19,11 @@ export default function Login() {
     e.preventDefault();
     setLoading(true);
     try {
-      await signIn(email, password);
+      const userData = await signIn(email, password);
       toast({ title: "Welcome back!" });
-      navigate("/");
+      
+      const dashboardPath = userData.role === "admin" ? "/admin" : userData.role === "doctor" ? "/doctor" : "/patient";
+      navigate(dashboardPath);
     } catch (err) {
       toast({ title: "Login failed", description: err.message, variant: "destructive" });
     } finally {

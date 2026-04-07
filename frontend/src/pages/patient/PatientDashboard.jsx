@@ -58,7 +58,7 @@ export default function PatientDashboard() {
                   <p className="text-xs text-muted-foreground">{a.doctorId?.specialization || "General"}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-sm text-foreground">{new Date(a.appointmentDate).toLocaleDateString()}</p>
+                  <p className="text-sm text-foreground">{new Date(a.date).toLocaleDateString()}</p>
                   <span className={`inline-block text-xs px-2 py-0.5 rounded-full mt-1 ${
                     a.status === "approved" ? "bg-success/10 text-success" :
                     a.status === "rejected" ? "bg-destructive/10 text-destructive" :

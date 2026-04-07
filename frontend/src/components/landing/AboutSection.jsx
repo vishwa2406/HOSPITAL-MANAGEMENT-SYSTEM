@@ -10,7 +10,7 @@ const stats = [
 
 export default function AboutSection() {
   return (
-    <section id="about" className="py-24 bg-white overflow-hidden">
+    <section id="about" className="py-24 bg-background overflow-hidden">
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-center mb-20">
           <motion.div
@@ -20,11 +20,11 @@ export default function AboutSection() {
             transition={{ duration: 0.8 }}
           >
             <span className="text-primary font-bold tracking-widest uppercase text-sm mb-3 block">Our Institutions</span>
-            <h2 className="text-4xl md:text-5xl font-display font-bold text-slate-900 mb-6 leading-tight">
+            <h2 className="text-4xl md:text-5xl font-display font-bold text-foreground mb-6 leading-tight">
               A Legacy of Healthcare <br />
               <span className="text-primary">Excellence & Innovation</span>
             </h2>
-            <p className="text-slate-600 text-lg mb-8 leading-relaxed">
+            <p className="text-muted-foreground text-lg mb-8 leading-relaxed">
               LIOHNS Hospital is a premier healthcare institution committed to delivering world-class medical services. 
               Our team of experienced professionals ensures personalized care with cutting-edge technology 
               and a heart for service.
@@ -60,13 +60,13 @@ export default function AboutSection() {
               />
             </div>
             {/* Floating stats card */}
-            <div className="absolute -bottom-10 -left-10 bg-white p-8 rounded-2xl shadow-2xl z-20 hidden md:block border border-slate-100">
+            <div className="absolute -bottom-10 -left-10 bg-card p-8 rounded-2xl shadow-2xl z-20 hidden md:block border border-border">
                <div className="flex items-center gap-4">
                  <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center text-white">
                    <Award className="h-6 w-6" />
                  </div>
                  <div>
-                   <p className="text-2xl font-bold text-slate-900">#1 Ranked</p>
+                   <p className="text-2xl font-bold text-foreground">#1 Ranked</p>
                    <p className="text-sm text-slate-500 font-medium">Medical Hub in Region</p>
                  </div>
                </div>
@@ -84,12 +84,12 @@ export default function AboutSection() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="text-center p-8 rounded-2xl bg-slate-50 hover:bg-white hover:shadow-xl transition-all duration-300 group border border-transparent hover:border-slate-100"
+              className="text-center p-8 rounded-2xl bg-muted hover:bg-card hover:shadow-xl transition-all duration-300 group border border-transparent hover:border-border"
             >
-              <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-white text-slate-900 shadow-sm mb-6 group-hover:scale-110 transition-transform duration-300`}>
+              <div className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-background text-foreground shadow-sm mb-6 group-hover:scale-110 transition-transform duration-300`}>
                 <span className="text-primary">{s.icon}</span>
               </div>
-              <div className="text-3xl font-bold text-slate-900 mb-1 group-hover:text-primary transition-colors">{s.value}</div>
+              <div className="text-3xl font-bold text-foreground mb-1 group-hover:text-primary transition-colors">{s.value}</div>
               <div className="text-sm font-semibold text-slate-500 uppercase tracking-wider">{s.label}</div>
             </motion.div>
           ))}

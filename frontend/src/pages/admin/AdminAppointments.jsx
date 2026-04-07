@@ -46,8 +46,8 @@ export default function AdminAppointments() {
               {appointments?.map((a) => (
                 <tr key={a._id}>
                   <td className="p-3 font-medium text-foreground">{a.doctorId?.userId?.fullName || "Doctor"}</td>
-                  <td className="p-3 text-foreground">{new Date(a.appointmentDate).toLocaleDateString()}</td>
-                  <td className="p-3 text-foreground">{a.appointmentTime}</td>
+                  <td className="p-3 text-foreground">{new Date(a.date).toLocaleDateString()}</td>
+                  <td className="p-3 text-foreground">{a.time}</td>
                   <td className="p-3">
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
                       a.status === "approved" ? "bg-success/10 text-success" :

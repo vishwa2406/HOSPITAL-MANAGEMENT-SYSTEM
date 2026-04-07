@@ -2,8 +2,20 @@ import DashboardLayout from "@/components/layout/DashboardLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/services/api";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+
+const isPastAppointment = (dateStr, timeStr) => {
+  const timeMatch = timeStr?.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!timeMatch) return new Date(dateStr) < new Date();
+  let [_, hours, minutes, modifier] = timeMatch;
+  hours = parseInt(hours, 10);
+  if (modifier.toUpperCase() === 'PM' && hours < 12) hours += 12;
+  if (modifier.toUpperCase() === 'AM' && hours === 12) hours = 0;
+  const apptDate = new Date(dateStr);
+  apptDate.setHours(hours, parseInt(minutes, 10), 0, 0);
+  return apptDate < new Date();
+};
 
 export default function DoctorAppointments() {
   const { user } = useAuth();
@@ -59,8 +71,8 @@ export default function DoctorAppointments() {
               )}
                {appointments?.map((a) => (
                 <tr key={a._id}>
-                  <td className="p-3 text-foreground">{new Date(a.appointmentDate).toLocaleDateString()}</td>
-                  <td className="p-3 text-foreground">{a.appointmentTime}</td>
+                  <td className="p-3 text-foreground">{new Date(a.date).toLocaleDateString()}</td>
+                  <td className="p-3 text-foreground">{a.time}</td>
                   <td className="p-3 text-muted-foreground text-xs">{a.notes || "—"}</td>
                   <td className="p-3">
                     <span className={`text-xs px-2 py-0.5 rounded-full ${
@@ -70,15 +82,24 @@ export default function DoctorAppointments() {
                     }`}>{a.status}</span>
                   </td>
                   <td className="p-3">
-                    <Select value={a.status} onValueChange={(v) => updateStatus.mutate({ id: a._id, status: v })}>
-                      <SelectTrigger className="w-32 h-8 text-xs"><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="approved">Approved</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    {a.status === "pending" && (
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" className="h-8 text-xs text-success border-success/20 hover:bg-success/10" onClick={() => updateStatus.mutate({ id: a._id, status: "approved" })}>Approve</Button>
+                        <Button size="sm" variant="outline" className="h-8 text-xs text-destructive border-destructive/20 hover:bg-destructive/10" onClick={() => updateStatus.mutate({ id: a._id, status: "rejected" })}>Reject</Button>
+                      </div>
+                    )}
+                    {a.status === "approved" && (
+                      <div className="flex gap-2">
+                        {isPastAppointment(a.date, a.time) ? (
+                          <Button size="sm" className="h-8 text-xs bg-primary text-primary-foreground hover:bg-primary/90" onClick={() => updateStatus.mutate({ id: a._id, status: "completed" })}>Complete</Button>
+                        ) : (
+                          <Button size="sm" variant="outline" className="h-8 text-xs text-destructive border-destructive/20 hover:bg-destructive/10" onClick={() => updateStatus.mutate({ id: a._id, status: "cancelled" })}>Cancel</Button>
+                        )}
+                      </div>
+                    )}
+                    {["completed", "rejected", "cancelled"].includes(a.status) && (
+                      <span className="text-xs text-muted-foreground font-medium">—</span>
+                    )}
                   </td>
                 </tr>
               ))}

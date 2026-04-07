@@ -28,12 +28,9 @@ export default function PatientChat() {
     setLoading(true);
 
     try {
-      // Placeholder for AI chat call (Supabase Edge Function was used before)
-      // I'll need to implement an AI route or a simple mock for now
-      setTimeout(() => {
-        setMessages([...newMessages, { role: "assistant", content: "I'm sorry, the AI chat service is currently being migrated. Please check back later." }]);
-        setLoading(false);
-      }, 1000);
+      const res = await api.post('/ai/chat', { prompt: input.trim() });
+      setMessages([...newMessages, { role: "assistant", content: res.data.response }]);
+      setLoading(false);
     } catch (err) {
       setMessages([...newMessages, { role: "assistant", content: "Sorry, I'm having trouble connecting. Please try again later." }]);
       setLoading(false);

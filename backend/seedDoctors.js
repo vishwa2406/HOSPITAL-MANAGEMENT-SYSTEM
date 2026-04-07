@@ -10,9 +10,9 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/care-c
 
 const doctorsData = [
   {
-    fullName: "Dr. Sarah Johnson",
-    email: "sarah.johnson@example.com",
-    password: "password123",
+    fullName: "Sarah Johnson",
+    email: "sarahjohnson@gmail.com",
+    password: "Sarah@123",
     role: "doctor",
     specialization: "Cardiology",
     experience: 15,
@@ -20,9 +20,9 @@ const doctorsData = [
     profileImage: "https://images.unsplash.com/photo-1559839734-2b71cc197ec2?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
-    fullName: "Dr. Michael Chen",
-    email: "michael.chen@example.com",
-    password: "password123",
+    fullName: "Michael Chen",
+    email: "michaelchen@gmail.com",
+    password: "Michael@123",
     role: "doctor",
     specialization: "Neurology",
     experience: 12,
@@ -30,9 +30,9 @@ const doctorsData = [
     profileImage: "https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
-    fullName: "Dr. Emily Williams",
-    email: "emily.williams@example.com",
-    password: "password123",
+    fullName: "Emily Williams",
+    email: "emilywilliams@gmail.com",
+    password: "Emily@123",
     role: "doctor",
     specialization: "Orthopedics",
     experience: 10,
@@ -40,9 +40,9 @@ const doctorsData = [
     profileImage: "https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&q=80&w=200&h=200"
   },
   {
-    fullName: "Dr. James Anderson",
-    email: "james.anderson@example.com",
-    password: "password123",
+    fullName: "James Anderson",
+    email: "jamesanderson@gmail.com",
+    password: "James@123",
     role: "doctor",
     specialization: "Pediatrics",
     experience: 8,
@@ -56,10 +56,14 @@ const seedDoctors = async () => {
     await mongoose.connect(MONGODB_URI);
     console.log('Connected to MongoDB for seeding...');
 
+    await User.deleteMany({ role: 'doctor' });
+    await Doctor.deleteMany({});
+    console.log('Cleared existing doctor data.');
+
     for (const doc of doctorsData) {
       // Check if user already exists
       let user = await User.findOne({ email: doc.email });
-      
+
       if (!user) {
         user = new User({
           fullName: doc.fullName,
@@ -73,7 +77,7 @@ const seedDoctors = async () => {
 
       // Check if doctor profile already exists
       let doctorProfile = await Doctor.findOne({ userId: user._id });
-      
+
       if (!doctorProfile) {
         doctorProfile = new Doctor({
           userId: user._id,

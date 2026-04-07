@@ -53,7 +53,7 @@ export default function AdminDashboard() {
             <div key={a._id} className="p-4 flex items-center justify-between text-sm">
               <div>
                 <p className="font-medium text-foreground">{a.doctorId?.userId?.fullName || "N/A"}</p>
-                <p className="text-xs text-muted-foreground">{new Date(a.appointmentDate).toLocaleDateString()} at {a.appointmentTime}</p>
+                <p className="text-xs text-muted-foreground">{new Date(a.date).toLocaleDateString()} at {a.time}</p>
               </div>
               <span className={`text-xs px-2 py-0.5 rounded-full ${
                 a.status === "approved" ? "bg-success/10 text-success" :
