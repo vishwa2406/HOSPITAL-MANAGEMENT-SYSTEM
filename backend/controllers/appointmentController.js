@@ -3,6 +3,7 @@ import Doctor from '../models/Doctor.js';
 import User from '../models/User.js';
 import Unavailability from '../models/Unavailability.js';
 import { sendEmail } from '../utils/email.js';
+import { createNotification } from './notificationController.js';
 
 export const getAppointments = async (req, res) => {
   try {
@@ -28,17 +29,15 @@ export const getAppointments = async (req, res) => {
 export const getBookedSlots = async (req, res) => {
   try {
     const { doctorId } = req.params;
-    const { date } = req.query; // YYYY-MM-DD
+    const { date } = req.query;
     const queryDate = new Date(date);
-    
-    // 1. Get booked appointments
+
     const appointments = await Appointment.find({
       doctorId,
       date,
       status: { $in: ['pending', 'approved', 'pending_reschedule'] }
     }).select('time');
 
-    // 2. Get unavailabilities from the new Unavailability model
     const unavailabilities = await Unavailability.find({
       doctorId,
       startDate: { $lte: queryDate },
@@ -51,7 +50,7 @@ export const getBookedSlots = async (req, res) => {
       end: u.endTime,
       fullDay: u.startTime === "00:00" && u.endTime === "23:59"
     }));
-    
+
     res.json({
       booked: bookedSlots,
       unavailableRanges,
@@ -64,7 +63,6 @@ export const getBookedSlots = async (req, res) => {
 
 export const createAppointment = async (req, res) => {
   try {
-    // Frontend sends appointmentDate & appointmentTime. Backend schema expects date & time.
     const dateInput = req.body.appointmentDate || req.body.date;
     const timeInput = req.body.appointmentTime || req.body.time;
 
@@ -72,7 +70,6 @@ export const createAppointment = async (req, res) => {
       return res.status(400).json({ message: 'Missing required fields: doctor, date, or time.' });
     }
 
-    // Double-Booking Check
     const existingAppointment = await Appointment.findOne({
       doctorId: req.body.doctorId,
       date: dateInput,
@@ -92,21 +89,42 @@ export const createAppointment = async (req, res) => {
       patientId: req.user._id
     });
 
-    // Send Email to patient
     const populatedAppt = await Appointment.findById(appointment._id)
       .populate('patientId', 'fullName email')
       .populate({ path: 'doctorId', populate: { path: 'userId', select: 'fullName' } });
 
-    await sendEmail({
-      to: populatedAppt.patientId.email,
-      subject: 'Appointment Request Received',
-      html: `
-        <h2>Hi ${populatedAppt.patientId.fullName},</h2>
-        <p>Your appointment request with ${populatedAppt.doctorId.userId.fullName} on ${new Date(populatedAppt.date).toLocaleDateString()} at ${populatedAppt.time} has been received.</p>
-        <p>Status: <strong>Pending Approval</strong></p>
-        <p>Thank you for choosing Care Companion!</p>
-      `
+    // Notify the doctor about new appointment
+    await createNotification({
+      userId: populatedAppt.doctorId.userId._id,
+      type: 'appointment_created',
+      title: 'New Appointment Request',
+      message: `${populatedAppt.patientId.fullName} has requested an appointment on ${new Date(populatedAppt.date).toLocaleDateString()} at ${populatedAppt.time}.`,
+      meta: { appointmentId: appointment._id }
     });
+
+    // Notify patient that request was received
+    await createNotification({
+      userId: req.user._id,
+      type: 'appointment_created',
+      title: 'Appointment Request Sent',
+      message: `Your appointment with Dr. ${populatedAppt.doctorId.userId.fullName} on ${new Date(populatedAppt.date).toLocaleDateString()} at ${populatedAppt.time} is pending approval.`,
+      meta: { appointmentId: appointment._id }
+    });
+
+    try {
+      await sendEmail({
+        to: populatedAppt.patientId.email,
+        subject: 'Appointment Request Received',
+        html: `
+          <h2>Hi ${populatedAppt.patientId.fullName},</h2>
+          <p>Your appointment request with Dr. ${populatedAppt.doctorId.userId.fullName} on ${new Date(populatedAppt.date).toLocaleDateString()} at ${populatedAppt.time} has been received.</p>
+          <p>Status: <strong>Pending Approval</strong></p>
+          <p>Thank you for choosing LIONHS Care!</p>
+        `
+      });
+    } catch (emailErr) {
+      console.error('Email send failed:', emailErr.message);
+    }
 
     res.status(201).json(appointment);
   } catch (error) {
@@ -122,19 +140,38 @@ export const updateAppointmentStatus = async (req, res) => {
       .populate({ path: 'doctorId', populate: { path: 'userId', select: 'fullName' } });
 
     if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
-    
+
     appointment.status = status;
     await appointment.save();
 
-    // Notify patient
-    await sendEmail({
-      to: appointment.patientId.email,
-      subject: `Appointment ${status.toUpperCase()}`,
-      html: `
-        <h2>Hi ${appointment.patientId.fullName},</h2>
-        <p>Your appointment with ${appointment.doctorId.userId.fullName} on ${new Date(appointment.date).toLocaleDateString()} at ${appointment.time} has been <strong>${status}</strong>.</p>
-      `
-    });
+    // Send notification to patient
+    const notifMap = {
+      approved: { type: 'appointment_approved', title: 'Appointment Approved ✅', message: `Your appointment with Dr. ${appointment.doctorId.userId.fullName} on ${new Date(appointment.date).toLocaleDateString()} at ${appointment.time} has been approved.` },
+      rejected: { type: 'appointment_rejected', title: 'Appointment Rejected ❌', message: `Your appointment with Dr. ${appointment.doctorId.userId.fullName} on ${new Date(appointment.date).toLocaleDateString()} at ${appointment.time} has been rejected.` },
+      cancelled: { type: 'appointment_cancelled', title: 'Appointment Cancelled', message: `Your appointment with Dr. ${appointment.doctorId.userId.fullName} on ${new Date(appointment.date).toLocaleDateString()} at ${appointment.time} has been cancelled.` },
+      completed: { type: 'general', title: 'Appointment Completed', message: `Your appointment with Dr. ${appointment.doctorId.userId.fullName} has been marked as completed.` },
+    };
+
+    if (notifMap[status]) {
+      await createNotification({
+        userId: appointment.patientId._id,
+        ...notifMap[status],
+        meta: { appointmentId: appointment._id }
+      });
+    }
+
+    try {
+      await sendEmail({
+        to: appointment.patientId.email,
+        subject: `Appointment ${status.toUpperCase()}`,
+        html: `
+          <h2>Hi ${appointment.patientId.fullName},</h2>
+          <p>Your appointment with Dr. ${appointment.doctorId.userId.fullName} on ${new Date(appointment.date).toLocaleDateString()} at ${appointment.time} has been <strong>${status}</strong>.</p>
+        `
+      });
+    } catch (emailErr) {
+      console.error('Email send failed:', emailErr.message);
+    }
 
     res.json(appointment);
   } catch (error) {
@@ -181,7 +218,6 @@ export const getAdminStats = async (req, res) => {
       Appointment.countDocuments({ status: 'pending' })
     ]);
 
-    // Status distribution
     const statusCounts = await Appointment.aggregate([
       { $group: { _id: '$status', count: { $sum: 1 } } }
     ]);
@@ -190,10 +226,9 @@ export const getAdminStats = async (req, res) => {
       value: item.count
     }));
 
-    // Daily trends (last 30 days)
     const thirtyDaysAgo = new Date();
     thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    
+
     const dailyTrends = await Appointment.aggregate([
       { $match: { createdAt: { $gte: thirtyDaysAgo } } },
       {
@@ -209,7 +244,6 @@ export const getAdminStats = async (req, res) => {
       count: item.count
     }));
 
-    // Doctor performance
     const docPerformance = await Appointment.aggregate([
       { $group: { _id: '$doctorId', count: { $sum: 1 } } },
       { $lookup: { from: 'doctors', localField: '_id', foreignField: '_id', as: 'doctorInfo' } },
@@ -221,7 +255,6 @@ export const getAdminStats = async (req, res) => {
       { $limit: 10 }
     ]);
 
-    // Total Revenue calculation
     const revenueStats = await Appointment.aggregate([
       { $match: { status: 'completed' } },
       { $lookup: { from: 'doctors', localField: 'doctorId', foreignField: '_id', as: 'doctorInfo' } },
@@ -253,14 +286,13 @@ export const rescheduleAppointment = async (req, res) => {
       .populate({ path: 'doctorId', populate: { path: 'userId', select: 'fullName' } });
 
     if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
-    
-    // Check if new time is available
+
     const existingAppointment = await Appointment.findOne({
       doctorId: appointment.doctorId._id,
       date: date,
       time: time,
       status: { $in: ['pending', 'approved'] },
-      _id: { $ne: appointment._id } // exclude self
+      _id: { $ne: appointment._id }
     });
 
     if (existingAppointment) {
@@ -269,8 +301,26 @@ export const rescheduleAppointment = async (req, res) => {
 
     appointment.date = date;
     appointment.time = time;
-    appointment.status = 'pending_reschedule'; // Requires doctor approval
+    appointment.status = 'pending_reschedule';
     await appointment.save();
+
+    // Notify the doctor about rescheduled request
+    await createNotification({
+      userId: appointment.doctorId.userId._id,
+      type: 'appointment_rescheduled',
+      title: 'Appointment Reschedule Request',
+      message: `${appointment.patientId.fullName} has requested to reschedule their appointment to ${new Date(date).toLocaleDateString()} at ${time}.`,
+      meta: { appointmentId: appointment._id }
+    });
+
+    // Notify patient
+    await createNotification({
+      userId: appointment.patientId._id,
+      type: 'appointment_rescheduled',
+      title: 'Reschedule Request Submitted',
+      message: `Your reschedule request to ${new Date(date).toLocaleDateString()} at ${time} with Dr. ${appointment.doctorId.userId.fullName} is pending approval.`,
+      meta: { appointmentId: appointment._id }
+    });
 
     res.json(appointment);
   } catch (error) {

@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
+import { NotificationProvider } from "@/contexts/NotificationContext";
 import Index from "./pages/Index";
 import ServiceDetail from "./pages/ServiceDetail";
 import Login from "./pages/Login";
@@ -19,6 +20,7 @@ import PatientAppointments from "./pages/patient/PatientAppointments";
 import PatientChat from "./pages/patient/PatientChat";
 import PatientProfile from "./pages/patient/PatientProfile";
 import PatientPrescriptions from "./pages/patient/PatientPrescriptions";
+import PatientNotifications from "./pages/patient/PatientNotifications";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminDoctors from "./pages/admin/AdminDoctors";
 import AdminAppointments from "./pages/admin/AdminAppointments";
@@ -35,6 +37,7 @@ import DoctorProfile from "./pages/doctor/DoctorProfile";
 import DoctorPrescriptions from "./pages/doctor/DoctorPrescriptions";
 import DoctorUnavailability from "./pages/doctor/DoctorUnavailability";
 import PatientHistory from "./pages/doctor/PatientHistory";
+import DoctorNotifications from "./pages/doctor/DoctorNotifications";
 
 function ProtectedRoute({ children, allowedRoles }) {
   const { user, role, loading } = useAuth();
@@ -58,6 +61,7 @@ function AppRoutes() {
       <Route path="/patient/appointments" element={<ProtectedRoute allowedRoles={["patient"]}><PatientAppointments /></ProtectedRoute>} />
       <Route path="/patient/chat" element={<ProtectedRoute allowedRoles={["patient"]}><PatientChat /></ProtectedRoute>} />
       <Route path="/patient/profile" element={<ProtectedRoute allowedRoles={["patient"]}><PatientProfile /></ProtectedRoute>} />
+      <Route path="/patient/notifications" element={<ProtectedRoute allowedRoles={["patient"]}><PatientNotifications /></ProtectedRoute>} />
 
       <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><AdminDashboard /></ProtectedRoute>} />
       <Route path="/admin/doctors" element={<ProtectedRoute allowedRoles={["admin"]}><AdminDoctors /></ProtectedRoute>} />
@@ -76,11 +80,23 @@ function AppRoutes() {
       <Route path="/doctor/prescriptions" element={<ProtectedRoute allowedRoles={["doctor"]}><DoctorPrescriptions /></ProtectedRoute>} />
       <Route path="/doctor/unavailability" element={<ProtectedRoute allowedRoles={["doctor"]}><DoctorUnavailability /></ProtectedRoute>} />
       <Route path="/doctor/history" element={<ProtectedRoute allowedRoles={["doctor"]}><PatientHistory /></ProtectedRoute>} />
-      
+      <Route path="/doctor/notifications" element={<ProtectedRoute allowedRoles={["doctor"]}><DoctorNotifications /></ProtectedRoute>} />
+
       <Route path="/chat/:appointmentId" element={<ProtectedRoute allowedRoles={["patient", "doctor", "admin"]}><ChatPage /></ProtectedRoute>} />
 
       <Route path="*" element={<NotFound />} />
     </Routes>
+  );
+}
+
+function AuthWrappedApp() {
+  const { user } = useAuth();
+  return user ? (
+    <NotificationProvider>
+      <AppRoutes />
+    </NotificationProvider>
+  ) : (
+    <AppRoutes />
   );
 }
 
@@ -92,7 +108,7 @@ const App = () => (
       <BrowserRouter>
         <ThemeProvider>
           <AuthProvider>
-            <AppRoutes />
+            <AuthWrappedApp />
           </AuthProvider>
         </ThemeProvider>
       </BrowserRouter>

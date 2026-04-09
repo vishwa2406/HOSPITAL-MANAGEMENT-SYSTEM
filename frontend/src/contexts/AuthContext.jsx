@@ -31,11 +31,11 @@ export function AuthProvider({ children }) {
     try {
       const response = await api.post('/auth/register', { email, password, fullName, role: 'patient' });
       const { token, ...userData } = response.data;
-      
+
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(userData));
       localStorage.setItem('role', userData.role);
-      
+
       setToken(token);
       setUser(userData);
       setRole(userData.role);
@@ -48,11 +48,11 @@ export function AuthProvider({ children }) {
     try {
       const response = await api.post('/auth/login', { email, password });
       const { token, ...userData } = response.data;
-      
+
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(userData));
       localStorage.setItem('role', userData.role);
-      
+
       setToken(token);
       setUser(userData);
       setRole(userData.role);
@@ -72,7 +72,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, role, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, setUser, token, role, loading, signUp, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

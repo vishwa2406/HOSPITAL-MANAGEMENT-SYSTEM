@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.js';
 import contentRoutes from './routes/content.js';
 import appointmentRoutes from './routes/appointments.js';
 import aiRoutes from './routes/ai.js';
+import notificationRoutes from './routes/notifications.js';
 
 import { Server } from 'socket.io';
 import http from 'http';
@@ -34,6 +35,7 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Socket.IO logic
 const users = {}; // Map socketId to userId

@@ -1,16 +1,18 @@
 import Prescription from '../models/Prescription.js';
 import Appointment from '../models/Appointment.js';
 import Doctor from '../models/Doctor.js';
+import { createNotification } from './notificationController.js';
 
 export const createPrescription = async (req, res) => {
   try {
     const { appointmentId, medicines, generalNotes } = req.body;
-    
-    const appointment = await Appointment.findById(appointmentId);
+
+    const appointment = await Appointment.findById(appointmentId)
+      .populate('patientId', 'fullName email');
     if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
-    
-    // Ensure the doctor is the one assigned to the appointment
-    const doctor = await Doctor.findOne({ userId: req.user._id });
+
+    const doctor = await Doctor.findOne({ userId: req.user._id })
+      .populate('userId', 'fullName');
     if (!doctor || appointment.doctorId.toString() !== doctor._id.toString()) {
       return res.status(403).json({ message: 'Not authorized to prescribe for this appointment' });
     }
@@ -21,6 +23,15 @@ export const createPrescription = async (req, res) => {
       doctorId: doctor._id,
       medicines,
       generalNotes
+    });
+
+    // Notify the patient
+    await createNotification({
+      userId: appointment.patientId._id,
+      type: 'prescription_generated',
+      title: 'New Prescription Available 💊',
+      message: `Dr. ${doctor.userId.fullName} has generated a prescription for your appointment. View it in your Prescriptions section.`,
+      meta: { prescriptionId: prescription._id, appointmentId }
     });
 
     res.status(201).json(prescription);
@@ -41,13 +52,13 @@ export const getPrescriptions = async (req, res) => {
 
     const prescriptions = await Prescription.find(query)
       .populate('appointmentId')
-      .populate('patientId', 'fullName email')
+      .populate('patientId', 'fullName email phone age')
       .populate({
         path: 'doctorId',
         populate: { path: 'userId', select: 'fullName' }
       })
       .sort({ createdAt: -1 });
-      
+
     res.json(prescriptions);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -58,6 +69,7 @@ export const getPatientPrescriptions = async (req, res) => {
   try {
     const prescriptions = await Prescription.find({ patientId: req.params.patientId })
       .populate('appointmentId')
+      .populate('patientId', 'fullName email phone age')
       .populate({
         path: 'doctorId',
         populate: { path: 'userId', select: 'fullName' }
