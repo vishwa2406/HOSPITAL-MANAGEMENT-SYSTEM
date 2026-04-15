@@ -14,6 +14,9 @@ import BlogDetail from "./pages/BlogDetail";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
+import ForgotPassword from "./pages/ForgotPassword";
+import VerifyOTP from "./pages/VerifyOTP";
+import ResetPassword from "./pages/ResetPassword";
 import ChatPage from "./pages/ChatPage";
 import AllDoctors from "./pages/AllDoctors";
 import AllBlogs from "./pages/AllBlogs";
@@ -64,6 +67,9 @@ function AppRoutes() {
       <Route path="/blogs" element={<AllBlogs />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/forgot-password" element={<ForgotPassword />} />
+      <Route path="/verify-otp/:email" element={<VerifyOTP />} />
+      <Route path="/reset-password/:email/:otp" element={<ResetPassword />} />
 
       <Route path="/patient" element={<ProtectedRoute allowedRoles={["patient"]}><PatientDashboard /></ProtectedRoute>} />
       <Route path="/patient/prescriptions" element={<ProtectedRoute allowedRoles={["patient"]}><PatientPrescriptions /></ProtectedRoute>} />

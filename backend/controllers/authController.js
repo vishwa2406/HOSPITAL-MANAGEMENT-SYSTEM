@@ -1,5 +1,8 @@
 import jwt from 'jsonwebtoken';
 import User from '../models/User.js';
+import OTP from '../models/OTP.js';
+import { sendEmail } from '../utils/email.js';
+import { getOTPEmail } from '../utils/emailTemplates.js';
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
@@ -219,6 +222,96 @@ export const updatePatientVitals = async (req, res) => {
 
     await patient.save();
     res.json({ message: 'Vitals updated successfully', healthMetrics: patient.healthMetrics });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const requestPasswordReset = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'Email not registered' });
+    }
+
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+    // Save OTP to DB (replace if exists)
+    await OTP.findOneAndUpdate(
+      { email },
+      { otp, createdAt: new Date(), attempts: 0 },
+      { upsert: true, new: true }
+    );
+
+    // Send Email
+    await sendEmail({
+      to: email,
+      subject: 'Password Reset OTP - LIOHNS Life Care',
+      html: getOTPEmail(otp),
+    });
+
+    res.json({ message: 'OTP sent to your email' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const verifyOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const otpRecord = await OTP.findOne({ email });
+
+    if (!otpRecord) {
+      return res.status(400).json({ message: 'OTP expired or not requested' });
+    }
+
+    if (otpRecord.attempts >= 5) {
+      await OTP.deleteOne({ email });
+      return res.status(400).json({ message: 'Too many failed attempts. Please request a new OTP.' });
+    }
+
+    if (otpRecord.otp !== otp) {
+      otpRecord.attempts += 1;
+      await otpRecord.save();
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    res.json({ message: 'OTP verified successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+
+    // Verify OTP again for security before resetting
+    const otpRecord = await OTP.findOne({ email });
+    if (!otpRecord || otpRecord.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid or expired OTP' });
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (!newPassword || newPassword.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters' });
+    }
+
+    // Update password
+    user.password = newPassword;
+    await user.save();
+
+    // Delete OTP record
+    await OTP.deleteOne({ email });
+
+    res.json({ message: 'Password reset successful' });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

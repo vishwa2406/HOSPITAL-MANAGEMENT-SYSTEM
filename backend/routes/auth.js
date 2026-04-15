@@ -12,6 +12,9 @@ import {
   uploadAvatar,
   changePassword,
   updatePatientVitals,
+  requestPasswordReset,
+  verifyOTP,
+  resetPassword,
 } from '../controllers/authController.js';
 
 const router = express.Router();
@@ -26,5 +29,8 @@ router.put('/admin/users/:id', protect, authorize('admin'), adminUpdateUser);
 router.delete('/admin/users/:id', protect, authorize('admin'), deleteUser);
 router.put('/change-password', protect, changePassword);
 router.put('/patients/:id/vitals', protect, authorize('doctor', 'admin'), updatePatientVitals);
+router.post('/forgot-password', requestPasswordReset);
+router.post('/verify-otp', verifyOTP);
+router.post('/reset-password', resetPassword);
 
 export default router;

@@ -243,3 +243,27 @@ export const getAppointmentStatusEmail = (title, patientName, doctorName, date, 
   `;
   return baseTemplate(title, content);
 };
+
+/**
+ * OTP Email Template
+ */
+export const getOTPEmail = (otp) => {
+  const content = `
+    <p style="font-size: 16px; margin-top: 0;">Hello,</p>
+    <p>Use the following OTP to reset your password. This OTP is valid for <strong>5 minutes</strong>.</p>
+    
+    <div style="background-color: #f8fafc; border: 2px dashed ${primaryColor}; border-radius: 8px; padding: 30px; margin: 25px 0; text-align: center;">
+      <p style="margin: 0 0 10px 0; font-size: 11px; text-transform: uppercase; letter-spacing: 1.5px; color: ${mutedColor}; font-weight: 700;">Your Verification Code</p>
+      <span style="font-family: 'Courier New', Courier, monospace; font-size: 42px; font-weight: bold; color: ${primaryColor}; letter-spacing: 12px; margin-left: 12px;">
+        ${otp}
+      </span>
+    </div>
+    
+    <div style="background-color: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; padding: 15px; margin-top: 20px; border-left: 4px solid #d97706;">
+      <p style="margin: 0; color: #92400e; font-size: 13px;">
+        <strong>Security Warning:</strong> If you did not request a password reset, please ignore this email or contact support if you have concerns.
+      </p>
+    </div>
+  `;
+  return baseTemplate("Password Reset OTP", content);
+};

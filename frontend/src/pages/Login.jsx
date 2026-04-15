@@ -128,6 +128,14 @@ export default function Login() {
                     {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                   </button>
                 </div>
+                <div className="flex justify-end pt-1">
+                  <Link 
+                    to="/forgot-password" 
+                    className="text-xs font-semibold text-primary hover:underline transition-all"
+                  >
+                    Forgot Password?
+                  </Link>
+                </div>
               </div>
 
               <Button type="submit" className="w-full h-12 rounded-xl font-bold bg-primary mt-2" disabled={loading}>

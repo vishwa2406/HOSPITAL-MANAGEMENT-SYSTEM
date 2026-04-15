@@ -51,7 +51,7 @@ export default function AdminDashboard() {
       value: `₹${stats?.summary?.totalRevenue || 0}`, 
       icon: <CreditCard className="h-6 w-6" />, 
       color: "bg-emerald-500",
-      trend: "+24% this month",
+      trend: "+24%",
       positive: true
     },
     { 
