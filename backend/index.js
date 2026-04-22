@@ -3,14 +3,14 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import compression from 'compression';
 import dotenv from 'dotenv';
+import http from 'http';
+import { initSocket } from './socket.js';
+
 import authRoutes from './routes/auth.js';
 import contentRoutes from './routes/content.js';
 import appointmentRoutes from './routes/appointments.js';
 import aiRoutes from './routes/ai.js';
 import notificationRoutes from './routes/notifications.js';
-
-import { Server } from 'socket.io';
-import http from 'http';
 import chatRoutes from './routes/chat.js';
 import prescriptionRoutes from './routes/prescriptions.js';
 import adminRoutes from './routes/admin.js';
@@ -20,19 +20,14 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});
 
 // Middleware
-app.use(compression()); // gzip compress all responses
+app.use(compression());
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/uploads', express.static('uploads', { maxAge: '7d' }));
+app.use(express.static('public'));
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -45,85 +40,21 @@ app.use('/api/notifications', notificationRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/contact', contactRoutes);
 
-// Socket.IO logic
-const users = {}; // Map socketId to userId
+// Initialize Socket
+initSocket(server);
 
-io.on('connection', (socket) => {
-
-  socket.on('register_user', (userId) => {
-    users[userId] = socket.id;
-  });
-
-  socket.on('join_chat', (chatId) => {
-    socket.join(chatId);
-  });
-
-  socket.on('send_message', (data) => {
-    // Uses socket.to instead of io.to so we don't duplicate the sender's own message
-    socket.to(data.chatId).emit('receive_message', data);
-    console.log(`New message in chat ${data.chatId}`);
-  });
-
-  socket.on('typing', ({ chatId, userId }) => {
-    socket.to(chatId).emit('user_typing', { userId });
-  });
-
-  // Video Call Signaling
-  socket.on('call_user', ({ userToCall, signalData, from, name }) => {
-    const targetSocket = users[userToCall];
-    if (targetSocket) {
-      io.to(targetSocket).emit('incoming_call', { signal: signalData, from, name });
-    }
-  });
-
-  socket.on('answer_call', (data) => {
-    const targetSocket = users[data.to];
-    if (targetSocket) {
-      io.to(targetSocket).emit('call_accepted', data.signal);
-    }
-  });
-
-  socket.on('end_call', ({ to }) => {
-    const targetSocket = users[to];
-    if (targetSocket) {
-      io.to(targetSocket).emit('call_ended');
-    }
-  });
-
-  socket.on('reject_call', ({ to }) => {
-    const targetSocket = users[to];
-    if (targetSocket) {
-      io.to(targetSocket).emit('call_rejected');
-    }
-  });
-
-  socket.on('ice_candidate', ({ to, candidate }) => {
-    const targetSocket = users[to];
-    if (targetSocket) {
-      io.to(targetSocket).emit('ice_candidate', { candidate, from: socket.id });
-    }
-  });
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected:', socket.id);
-    // Remove user mapping
-    Object.keys(users).forEach(key => {
-      if (users[key] === socket.id) delete users[key];
-    });
-  });
-});
-
-// Routes Placeholder
 app.get('/', (req, res) => {
   res.send('Care Companion API is running...');
 });
 
-// MongoDB Connection
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
+if (!PORT) throw new Error("CRITICAL: PORT is not defined in .env");
+
 const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) throw new Error("CRITICAL: MONGODB_URI is not defined in .env");
 
 mongoose.connect(MONGODB_URI, {
-  maxPoolSize: 10, // maintain up to 10 socket connections
+  maxPoolSize: 10,
   minPoolSize: 2,
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,

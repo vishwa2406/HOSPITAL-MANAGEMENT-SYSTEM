@@ -29,11 +29,11 @@ export default function DoctorBilling() {
       pdf.setTextColor(255, 255, 255);
       pdf.setFontSize(22);
       pdf.setFont("helvetica", "bold");
-      pdf.text("LIONHS Care Invoice", pageWidth / 2, 18, { align: "center" });
+      pdf.text("LIOHNS Care Invoice", pageWidth / 2, 18, { align: "center" });
       
       pdf.setFontSize(10);
       pdf.setFont("helvetica", "normal");
-      pdf.text("Electronic Billing Statement • Tax Invoice", pageWidth / 2, 26, { align: "center" });
+      pdf.text("Electronic Billing Statement - Tax Invoice", pageWidth / 2, 26, { align: "center" });
 
       pdf.setTextColor(30, 41, 59);
       pdf.setFontSize(10);
@@ -59,14 +59,14 @@ export default function DoctorBilling() {
       pdf.setFont("helvetica", "normal");
       pdf.text(`Consultation Fee`, 20, 110);
       pdf.text(new Date(appt?.date || pay.createdAt).toLocaleDateString(), 100, 110);
-      pdf.text(`₹${pay.amount ? pay.amount.toFixed(2) : '1500.00'}`, pageWidth - 20, 110, { align: "right" });
+      pdf.text(`Rs. ${pay.amount ? pay.amount.toFixed(2) : '1500.00'}`, pageWidth - 20, 110, { align: "right" });
 
       pdf.line(15, 120, pageWidth - 15, 120);
       
       pdf.setFont("helvetica", "bold");
       pdf.setFontSize(14);
       pdf.text("Total Paid:", 120, 135);
-      pdf.text(`₹${pay.amount ? pay.amount.toFixed(2) : '1500.00'}`, pageWidth - 20, 135, { align: "right" });
+      pdf.text(`Rs. ${pay.amount ? pay.amount.toFixed(2) : '1500.00'}`, pageWidth - 20, 135, { align: "right" });
 
       pdf.setFontSize(8);
       pdf.setTextColor(148, 163, 184);
@@ -76,7 +76,7 @@ export default function DoctorBilling() {
       pdf.setDrawColor(226, 232, 240);
       pdf.line(15, 165, pageWidth - 15, 165);
       pdf.setFontSize(7);
-      pdf.text("Thank you for choosing LIONHS Care.", pageWidth / 2, 172, { align: "center" });
+      pdf.text("Thank you for choosing LIOHNS Care.", pageWidth / 2, 172, { align: "center" });
 
       const blob = pdf.output('blob');
       const blobUrl = URL.createObjectURL(blob);
@@ -114,7 +114,7 @@ export default function DoctorBilling() {
                 <td className="p-4 whitespace-nowrap">{new Date(p.createdAt).toLocaleDateString()}</td>
                 <td className="p-4 font-bold text-foreground">{p.patientId?.fullName || "Patient"}</td>
                 <td className="p-4 font-mono text-[10px] text-muted-foreground">{p.transactionId}</td>
-                <td className="p-4 font-black text-emerald-600">₹{p.amount?.toFixed(2)}</td>
+                <td className="p-4 font-black text-emerald-600">Rs. {p.amount?.toFixed(2)}</td>
                 <td className="p-4 text-center">
                   <div className="flex items-center justify-center gap-2">
                     <Button size="sm" variant="outline" className="h-9 px-4 rounded-xl text-xs font-bold gap-2 bg-primary/5 border-primary/10 text-primary hover:bg-primary/10" onClick={() => exportInvoice(p)}>

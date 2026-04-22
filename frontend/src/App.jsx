@@ -5,10 +5,10 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 5 * 60 * 1000, // 5 minutes — prevents redundant refetches
-      gcTime: 10 * 60 * 1000, // 10 minutes garbage collection
-      refetchOnWindowFocus: false, // don't refetch just because tab regained focus
-      retry: 1, // only 1 retry on failure instead of default 3
+      staleTime: 5 * 60 * 1000, 
+      gcTime: 10 * 60 * 1000, 
+      refetchOnWindowFocus: false, 
+      retry: 1, 
     },
   },
 });
@@ -19,8 +19,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import { NotificationProvider } from "@/contexts/NotificationContext";
+import { SocketProvider } from "@/contexts/SocketContext";
 
-// ─── Lazy-loaded pages (code-split per route) ──────────────────────
 const Index = lazy(() => import("./pages/Index"));
 const ServiceDetail = lazy(() => import("./pages/ServiceDetail"));
 const BlogDetail = lazy(() => import("./pages/BlogDetail"));
@@ -30,7 +30,6 @@ const NotFound = lazy(() => import("./pages/NotFound"));
 const ForgotPassword = lazy(() => import("./pages/ForgotPassword"));
 const VerifyOTP = lazy(() => import("./pages/VerifyOTP"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
-const ChatPage = lazy(() => import("./pages/ChatPage"));
 const AllDoctors = lazy(() => import("./pages/AllDoctors"));
 const AllBlogs = lazy(() => import("./pages/AllBlogs"));
 const PatientDashboard = lazy(() => import("./pages/patient/PatientDashboard"));
@@ -62,14 +61,12 @@ const PatientBilling = lazy(() => import("./pages/patient/PatientBilling"));
 const DoctorBilling = lazy(() => import("./pages/doctor/DoctorBilling"));
 const AdminBilling = lazy(() => import("./pages/admin/AdminBilling"));
 
-// ─── Route-level loading fallback ──────────────────────────────────
+import HeartbeatLoader from "@/components/ui/HeartbeatLoader";
+
 function PageLoader() {
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
-        <p className="text-muted-foreground text-sm font-medium">Loading...</p>
-      </div>
+      <HeartbeatLoader />
     </div>
   );
 }
@@ -117,7 +114,8 @@ function AppRoutes() {
         <Route path="/admin/faq" element={<ProtectedRoute allowedRoles={["admin"]}><AdminFAQ /></ProtectedRoute>} />
         <Route path="/admin/chats" element={<ProtectedRoute allowedRoles={["admin"]}><AdminChats /></ProtectedRoute>} />
         <Route path="/admin/billing" element={<ProtectedRoute allowedRoles={["admin"]}><AdminBilling /></ProtectedRoute>} />
-        <Route path="/chats" element={<ProtectedRoute allowedRoles={["patient", "doctor"]}><ConsultationChats /></ProtectedRoute>} />
+        <Route path="/chats" element={<ProtectedRoute allowedRoles={["patient", "doctor", "admin"]}><ConsultationChats /></ProtectedRoute>} />
+        <Route path="/chats/:appointmentId" element={<ProtectedRoute allowedRoles={["patient", "doctor", "admin"]}><ConsultationChats /></ProtectedRoute>} />
 
         <Route path="/doctor" element={<ProtectedRoute allowedRoles={["doctor"]}><DoctorDashboard /></ProtectedRoute>} />
         <Route path="/doctor/appointments" element={<ProtectedRoute allowedRoles={["doctor"]}><DoctorAppointments /></ProtectedRoute>} />
@@ -128,7 +126,8 @@ function AppRoutes() {
         <Route path="/doctor/notifications" element={<ProtectedRoute allowedRoles={["doctor"]}><DoctorNotifications /></ProtectedRoute>} />
         <Route path="/doctor/billing" element={<ProtectedRoute allowedRoles={["doctor"]}><DoctorBilling /></ProtectedRoute>} />
 
-        <Route path="/chat/:appointmentId" element={<ProtectedRoute allowedRoles={["patient", "doctor", "admin"]}><ChatPage /></ProtectedRoute>} />
+        {/* Old ChatPage route redirected to unified chats */}
+        <Route path="/chat/:appointmentId" element={<Navigate to="/chats" replace />} />
 
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -158,7 +157,9 @@ const App = () => (
         <ScrollToTop />
         <ThemeProvider>
           <AuthProvider>
-            <AuthWrappedApp />
+            <SocketProvider>
+              <AuthWrappedApp />
+            </SocketProvider>
           </AuthProvider>
         </ThemeProvider>
       </BrowserRouter>

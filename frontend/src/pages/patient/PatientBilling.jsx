@@ -53,7 +53,7 @@ export default function PatientBilling() {
                 <td className="p-4">{new Date(p.createdAt).toLocaleDateString()}</td>
                 <td className="p-4 font-bold">{p.doctorId?.userId?.fullName || "Doctor"}</td>
                 <td className="p-4 font-mono text-[10px] text-muted-foreground">{p.transactionId}</td>
-                <td className="p-4 font-bold text-emerald-600">₹{p.amount?.toFixed(2)}</td>
+                <td className="p-4 font-bold text-emerald-600">Rs. {p.amount?.toFixed(2)}</td>
                 <td className="p-4 flex justify-end">
                   <Button size="sm" variant="outline" className="h-8 text-xs font-bold" onClick={() => exportInvoice(p)}>
                     <Download className="w-3 h-3 mr-1" /> View Invoice

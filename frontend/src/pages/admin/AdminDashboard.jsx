@@ -48,7 +48,7 @@ export default function AdminDashboard() {
     },
     { 
       label: "Total Revenue", 
-      value: `₹${stats?.summary?.totalRevenue || 0}`, 
+      value: `Rs. ${stats?.summary?.totalRevenue || 0}`, 
       icon: <CreditCard className="h-6 w-6" />, 
       color: "bg-emerald-500",
       trend: "+24%",
@@ -68,8 +68,8 @@ export default function AdminDashboard() {
     <DashboardLayout role="admin">
       <div className="space-y-10 p-8">
         <header className="flex flex-col md:flex-row items-baseline gap-4">
-          <h1 className="text-4xl font-black text-foreground tracking-tight">Executive <span className="text-primary italic">Summary</span> 📊</h1>
-          <p className="text-foreground/80 font-medium">Real-time performance analytics for LIONHS.</p>
+          <h1 className="text-4xl font-black text-foreground tracking-tight">Executive <span className="text-primary italic">Summary</span></h1>
+          <p className="text-foreground/80 font-medium">Real-time performance analytics for LIOHNS.</p>
         </header>
 
         {/* Metrics Grid */}

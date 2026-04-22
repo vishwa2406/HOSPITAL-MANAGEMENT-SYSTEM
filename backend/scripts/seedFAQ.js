@@ -4,7 +4,8 @@ import { FAQ } from '../models/Content.js';
 
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/care-companion';
+const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) throw new Error("CRITICAL: MONGODB_URI is not defined in .env");
 
 const faqData = [
   {
@@ -39,11 +40,21 @@ const seedFAQ = async () => {
     await mongoose.connect(MONGODB_URI);
     console.log('Connected to MongoDB for FAQ seeding...');
 
+    /*
     await FAQ.deleteMany({});
     console.log('Cleared existing FAQ data.');
 
     await FAQ.insertMany(faqData);
-    console.log('Successfully seeded FAQ data.');
+    */
+
+    for (const faq of faqData) {
+      await FAQ.updateOne(
+        { question: faq.question },
+        { $set: faq },
+        { upsert: true }
+      );
+    }
+    console.log('Successfully seeded/updated FAQ data.');
 
     process.exit(0);
   } catch (error) {

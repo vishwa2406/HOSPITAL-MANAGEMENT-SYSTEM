@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "@/services/api";
 import DashboardLayout from "@/components/layout/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import HeartbeatLoader from "@/components/ui/HeartbeatLoader";
 import { 
   Users, Calendar, Clock, CheckCircle, 
   TrendingUp, BarChart3, PieChart as PieChartIcon, 
@@ -26,13 +27,15 @@ export default function AdminAnalytics() {
     },
   });
 
-  if (isLoading) return (
-    <DashboardLayout role="admin">
-      <div className="flex items-center justify-center h-[80vh]">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-      </div>
-    </DashboardLayout>
-  );
+  if (isLoading) {
+    return (
+      <DashboardLayout role="admin">
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <HeartbeatLoader />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   const gridColor = isDarkMode ? '#334155' : '#f1f5f9';
   const labelColor = isDarkMode ? '#94a3b8' : '#64748b';
@@ -41,7 +44,7 @@ export default function AdminAnalytics() {
     <DashboardLayout role="admin">
       <div className="space-y-8 pb-10">
         <header>
-          <h1 className="text-3xl font-black text-foreground tracking-tight">Reports & <span className="text-primary italic">Analytics</span> 📊</h1>
+          <h1 className="text-3xl font-black text-foreground tracking-tight">Reports & <span className="text-primary italic">Analytics</span></h1>
           <p className="text-muted-foreground font-medium mt-1">Real-time platform performance and activity oversight.</p>
         </header>
 

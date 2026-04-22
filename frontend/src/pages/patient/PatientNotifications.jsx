@@ -44,7 +44,7 @@ export default function PatientNotifications() {
                 animate={{ opacity: 1, y: 0 }}
                 className="text-4xl font-black text-foreground tracking-tight"
               >
-                Notifications <span className="text-primary italic">Center</span> 🔔
+                Notifications <span className="text-primary italic">Center</span>
               </motion.h1>
               <p className="text-muted-foreground font-medium mt-2">Stay updated with your clinical alerts and schedule changes.</p>
             </div>

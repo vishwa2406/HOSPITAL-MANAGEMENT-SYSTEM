@@ -6,6 +6,7 @@ import Footer from "@/components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CheckCircle, CalendarPlus, Heart, Brain, Bone, Baby, Eye, Stethoscope } from "lucide-react";
 import BackButton from "@/components/ui/BackButton";
+import { useAuth } from "@/contexts/AuthContext";
 
 const iconMap = {
   Heart: <Heart className="h-12 w-12" />,
@@ -28,6 +29,7 @@ const fallbackServices = [
 export default function ServiceDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { role } = useAuth();
 
   const { data: services } = useQuery({
     queryKey: ["services"],

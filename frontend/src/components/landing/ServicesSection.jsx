@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "@/services/api";
-import { ArrowRight, Activity, Ambulance, Microscope, Pill, BedSingle, Stethoscope } from "lucide-react";
+import { ArrowRight, Activity, Ambulance, Microscope, Pill, BedSingle, Stethoscope, HeartPulse, Brain, Bone, Baby } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { AnimatedSectionHeader, StaggerContainer, cardVariants, buttonHoverTap } from "./AnimatedSection";
@@ -11,16 +11,27 @@ const iconMap = {
   lab: <Microscope className="h-7 w-7" />,
   pharmacy: <Pill className="h-7 w-7" />,
   room: <BedSingle className="h-7 w-7" />,
-  Stethoscope: <Stethoscope className="h-7 w-7" />,
+  stethoscope: <Stethoscope className="h-7 w-7" />,
+  heartpulse: <HeartPulse className="h-7 w-7" />,
+  brain: <Brain className="h-7 w-7" />,
+  bone: <Bone className="h-7 w-7" />,
+  baby: <Baby className="h-7 w-7" />,
 };
 
-const fallbackServices = [
-  { id: "1", title: "24x7 Emergency Care", description: "Lifecare Hospital offers 24x7 emergency care with specialized ICU support and neurosurgery backup.", icon: "emergency" },
-  { id: "2", title: "Ambulance Services", description: "Reliable ambulance services, ensuring patients get timely care when every second counts.", icon: "ambulance" },
-  { id: "3", title: "Home Sample Pickup", description: "Sample pickup at your home & give 99.8% accuracy in results.", icon: "lab" },
-  { id: "4", title: "24/7 Pharmacy", description: "Medicines at your doorsteps. Shop your medicine online from LIOHN. Essentials at your doorstep anytime in emergency situation.", icon: "pharmacy" },
-  { id: "5", title: "Private Rooms", description: "Private rooms are quieter and safer than shared rooms and better for your recovery. Every patient gets their own private room.", icon: "room" }
-];
+// Helper to get icon or emoji
+const getServiceIcon = (iconName) => {
+  if (!iconName) return <Stethoscope className="h-7 w-7" />;
+  
+  // Check if it's an emoji (usually 1-2 characters)
+  if (iconName.length <= 2) {
+    return <span className="text-3xl leading-none">{iconName}</span>;
+  }
+  
+  // Case-insensitive lookup in map
+  return iconMap[iconName.toLowerCase()] || <Stethoscope className="h-7 w-7" />;
+};
+
+// No fallback services to ensure real data is fetched from database
 
 export default function ServicesSection() {
   const { data: services } = useQuery({
@@ -28,14 +39,15 @@ export default function ServicesSection() {
     queryFn: async () => {
       try {
         const response = await api.get("/content/services");
-        return response.data && response.data.length > 0 ? response.data : fallbackServices;
+        return response.data && response.data.length > 0 ? response.data : [];
       } catch (e) {
-        return fallbackServices;
+        console.error("Failed to fetch services:", e);
+        return [];
       }
     },
   });
 
-  const items = services || fallbackServices;
+  const items = services || [];
 
   return (
     <section id="services" className="py-24 bg-background relative overflow-hidden">
@@ -67,7 +79,7 @@ export default function ServicesSection() {
                 transition={{ type: "spring", stiffness: 300, duration: 0.6 }}
                 className="w-16 h-16 rounded-2xl bg-primary/5 text-primary flex items-center justify-center mb-6 group-hover:bg-primary group-hover:text-white transition-all duration-300"
               >
-                {iconMap[s.icon || "Stethoscope"] || <Stethoscope className="h-7 w-7" />}
+                {getServiceIcon(s.icon)}
               </motion.div>
               <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-primary transition-colors">{s.title}</h3>
               <p className="text-foreground/60 mb-6 leading-relaxed text-sm">{s.description}</p>

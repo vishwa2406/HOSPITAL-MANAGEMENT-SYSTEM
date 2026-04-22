@@ -92,10 +92,10 @@ export default function DoctorAppointments() {
   const openVitalsModal = (patient) => {
     setSelectedPatient(patient);
     setVitals({
-      bloodPressure: patient.healthMetrics?.bloodPressure || "120/80",
-      heartRate: patient.healthMetrics?.heartRate || 72,
-      glucose: patient.healthMetrics?.glucose || 90,
-      temperature: patient.healthMetrics?.temperature || 36.6
+      bloodPressure: patient.healthMetrics?.bloodPressure || "",
+      heartRate: patient.healthMetrics?.heartRate || "",
+      glucose: patient.healthMetrics?.glucose || "",
+      temperature: patient.healthMetrics?.temperature || ""
     });
     setIsVitalsModalOpen(true);
   };
@@ -189,13 +189,13 @@ export default function DoctorAppointments() {
                     </td>
                     <td className="p-4">
                       {a.status === 'approved' || a.status === 'completed' ? (
-                        <Link to={`/chat/${a._id}`}>
+                        <Link to={`/chats/${a._id}`}>
                           <Button size="sm" variant="outline" className="h-7 text-[10px] px-2 text-primary">
                             <MessageSquare className="w-3 h-3 mr-1" /> Chat
                           </Button>
                         </Link>
                       ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
+                        <span className="text-xs text-muted-foreground">-</span>
                       )}
                     </td>
                     <td className="p-4">
@@ -209,7 +209,7 @@ export default function DoctorAppointments() {
                           <Activity className="w-3 h-3 mr-1" /> Vitals
                         </Button>
                       ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
+                        <span className="text-xs text-muted-foreground">-</span>
                       )}
                     </td>
                     <td className="p-4">
@@ -218,7 +218,7 @@ export default function DoctorAppointments() {
                           <FileText className="w-3 h-3 mr-1" /> View Invoice
                         </Button>
                       ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
+                        <span className="text-xs text-muted-foreground">-</span>
                       )}
                     </td>
                     <td className="p-4">
@@ -227,7 +227,7 @@ export default function DoctorAppointments() {
                           <Download className="w-3 h-3 mr-1" /> View Prescription
                         </Button>
                       ) : (
-                        <span className="text-xs text-muted-foreground">—</span>
+                        <span className="text-xs text-muted-foreground">-</span>
                       )}
                     </td>
                   </tr>

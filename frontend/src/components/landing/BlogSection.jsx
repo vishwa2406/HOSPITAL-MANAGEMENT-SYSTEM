@@ -6,12 +6,6 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { AnimatedSectionHeader, StaggerContainer, cardVariants, buttonHoverTap } from "./AnimatedSection";
 
-const fallbackBlogs = [
-  { id: "1", title: "10 Tips for a Healthy Heart", content: "Regular exercise, balanced diet, and stress management are key to maintaining heart health in your daily routine...", image: "https://images.unsplash.com/photo-1505751172107-19598f4bc1e2?auto=format&fit=crop&q=80&w=600&h=400", created_at: "2025-01-15", author: "Dr. Sarah J." },
-  { id: "2", title: "Understanding Diabetes", content: "Diabetes management requires consistent monitoring, lifestyle adjustments, and regular consults with specialists...", image: "https://images.unsplash.com/photo-1584036561566-baf8f5f1b144?auto=format&fit=crop&q=80&w=600&h=400", created_at: "2025-02-10", author: "Dr. Michael C." },
-  { id: "3", title: "Mental Health Matters", content: "Taking care of your mental health is just as important as physical health. Learn how to manage stress effectively...", image: "https://images.unsplash.com/photo-1527137342181-19aab11a8ee1?auto=format&fit=crop&q=80&w=600&h=400", created_at: "2025-03-05", author: "Emily Ross" },
-];
-
 export default function BlogSection() {
   const navigate = useNavigate();
   const { data: blogs } = useQuery({
@@ -19,14 +13,15 @@ export default function BlogSection() {
     queryFn: async () => {
       try {
         const response = await api.get("/content/blogs");
-        return response.data && response.data.length > 0 ? response.data.slice(0, 3) : fallbackBlogs;
+        return response.data && response.data.length > 0 ? response.data.slice(0, 3) : [];
       } catch (e) {
-        return fallbackBlogs;
+        console.error("Failed to fetch blogs:", e);
+        return [];
       }
     },
   });
 
-  const items = blogs || fallbackBlogs;
+  const items = blogs || [];
 
   return (
     <section id="blog" className="py-24 bg-muted relative overflow-hidden">

@@ -52,7 +52,7 @@ export function AnimatedSectionHeader({ badge, title, description, align = "cent
 }
 
 /**
- * Stagger container for card grids — children animate in sequence.
+ * Stagger container for card grids - children animate in sequence.
  */
 export function StaggerContainer({ children, className = "", stagger = 0.1, delay = 0 }) {
   return (

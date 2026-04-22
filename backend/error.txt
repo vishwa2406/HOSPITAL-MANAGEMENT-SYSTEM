@@ -1,0 +1,17 @@
+node : file:///D:/Internship/care-companion-app-main/backend/controllers/appointmentController.js:464
+At line:1 char:1
++ node index.js 2>&1 | Out-File -FilePath error.txt -Encoding ascii
++ ~~~~~~~~~~~~~~~~~~
+    + CategoryInfo              : NotSpecified: (fil    e:///D:/Inte...ntrolle    r.js:464:String) [], R    emoteException
+    + FullyQualifiedErrorI    d : NativeCommandError
+ 
+export const getAdminAppointments = async (req, res) => {
+             ^
+
+SyntaxError: Identifier 'getAdminAppointments' has already been declared
+    at compileSourceTextModule (node:internal/modules/esm/utils:338:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:102:18)
+    at #translate (node:internal/modules/esm/loader:437:12)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:484:27)
+
+Node.js v22.12.0

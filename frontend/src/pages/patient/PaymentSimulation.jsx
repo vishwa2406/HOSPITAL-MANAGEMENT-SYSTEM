@@ -31,7 +31,7 @@ export default function PaymentSimulation() {
     },
     onSuccess: () => {
       toast({
-        title: "Payment Successful! 🎉",
+        title: "Payment Successful!",
         description: "Your consultation fee has been paid and your prescription is unlocked.",
       });
       navigate("/patient/prescriptions"); // Redirect back to prescriptions
@@ -69,7 +69,7 @@ export default function PaymentSimulation() {
               <CreditCard className="w-8 h-8" />
             </div>
             <CardTitle className="text-2xl font-black italic tracking-tight">SafePay <span className="text-white/70">Gateway</span></CardTitle>
-            <p className="text-white/60 text-sm font-bold uppercase tracking-widest mt-2">LIONHS Secure Payment</p>
+            <p className="text-white/60 text-sm font-bold uppercase tracking-widest mt-2">LIOHNS Secure Payment</p>
           </CardHeader>
 
           <CardContent className="p-10 space-y-8">
@@ -78,7 +78,7 @@ export default function PaymentSimulation() {
                 <div>
                   <p className="text-[10px] font-black uppercase text-slate-400 tracking-widest leading-none">Consultation Fee</p>
                   <h3 className="text-2xl font-black text-slate-900 mt-1">
-                    ₹{appointment?.chargeAmount ? appointment.chargeAmount.toFixed(2) : "..."}
+                    Rs. {appointment?.chargeAmount ? appointment.chargeAmount.toFixed(2) : "..."}
                   </h3>
                 </div>
                 <ShieldCheck className="w-8 h-8 text-emerald-500" />
@@ -101,7 +101,7 @@ export default function PaymentSimulation() {
                   <Input
                     type="password"
                     maxLength={4}
-                    placeholder="••••"
+                    placeholder="****"
                     value={pin}
                     onChange={(e) => {
                       setPin(e.target.value);

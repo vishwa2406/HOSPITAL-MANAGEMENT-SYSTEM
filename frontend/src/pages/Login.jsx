@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Heart, Eye, EyeOff, ShieldAlert } from "lucide-react";
 import api from "@/services/api";
 import { motion } from "framer-motion";
+import Logo from "../assets/Logo.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -83,10 +84,7 @@ export default function Login() {
       >
         <div className="text-center mb-4">
           <Link to="/" className="inline-flex items-center gap-2 mb-2 group">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-              <Heart className="h-6 w-6 text-white" />
-            </div>
-            <span className="text-2xl font-black text-foreground tracking-tighter uppercase">LIOHNS Life Care</span>
+            <img src={Logo} alt="LIOHNS Logo" className="h-12 w-auto shadow-lg dark:invert transition-transform duration-300 group-hover:scale-105" />
           </Link>
           <p className="text-sm font-medium text-muted-foreground uppercase tracking-widest">Healthcare management at your fingertips</p>
         </div>
@@ -117,7 +115,7 @@ export default function Login() {
                     value={password} 
                     onChange={(e) => setPassword(e.target.value)} 
                     required 
-                    placeholder="••••••••"
+                    placeholder="********"
                     className="rounded-xl h-12 pr-10"
                   />
                   <button
@@ -187,7 +185,7 @@ export default function Login() {
         </div>
         
         <div className="mt-6 text-center px-4">
-             <Link to="/" className="text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest">← Back to homepage</Link>
+             <Link to="/" className="text-xs font-bold text-muted-foreground hover:text-primary transition-colors uppercase tracking-widest">Back to homepage</Link>
         </div>
       </motion.div>
     </div>

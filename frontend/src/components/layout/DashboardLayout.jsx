@@ -14,8 +14,10 @@ import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import GlobalCallOverlay from "../chat/GlobalCallOverlay";
+import Logo from "../../assets/Logo.png";
+import api from "@/services/api";
 
 const patientNav = [
   { label: "Dashboard", path: "/patient", icon: <LayoutDashboard className="h-4 w-4" /> },
@@ -23,9 +25,9 @@ const patientNav = [
   { label: "My Appointments", path: "/patient/appointments", icon: <Calendar className="h-4 w-4" /> },
   { label: "Prescriptions", path: "/patient/prescriptions", icon: <Pill className="h-4 w-4" /> },
   { label: "Billing", path: "/patient/billing", icon: <CreditCard className="h-4 w-4" /> },
-  { label: "Messages", path: "/chats", icon: <MessageSquare className="h-4 w-4" /> },
+  { label: "Messages", path: "/chats", icon: <MessageSquare className="h-4 w-4" />, chatNotify: true },
   { label: "Notifications", path: "/patient/notifications", icon: <Bell className="h-4 w-4" />, notify: true },
-  { label: "AI Assistant", path: "/patient/chat", icon: <Bot className="h-4 w-4" /> },
+  { label: "Smart Help", path: "/patient/chat", icon: <Bot className="h-4 w-4" /> },
   { label: "Profile", path: "/patient/profile", icon: <User className="h-4 w-4" /> },
 ];
 
@@ -34,8 +36,8 @@ const doctorNav = [
   { label: "Appointments", path: "/doctor/appointments", icon: <Calendar className="h-4 w-4" /> },
   { label: "Prescriptions", path: "/doctor/prescriptions", icon: <Pill className="h-4 w-4" /> },
   { label: "Billing", path: "/doctor/billing", icon: <CreditCard className="h-4 w-4" /> },
-  { label: "Schedule", path: "/doctor/unavailability", icon: <Clock className="h-4 w-4" /> },
-  { label: "Messages", path: "/chats", icon: <MessageSquare className="h-4 w-4" /> },
+  { label: "Unavailable", path: "/doctor/unavailability", icon: <Clock className="h-4 w-4" /> },
+  { label: "Messages", path: "/chats", icon: <MessageSquare className="h-4 w-4" />, chatNotify: true },
   { label: "Notifications", path: "/doctor/notifications", icon: <Bell className="h-4 w-4" />, notify: true },
   { label: "Patient History", path: "/doctor/history", icon: <FileText className="h-4 w-4" /> },
   { label: "Profile", path: "/doctor/profile", icon: <User className="h-4 w-4" /> },
@@ -49,15 +51,31 @@ const adminNav = [
   { label: "Appointments", path: "/admin/appointments", icon: <Calendar className="h-4 w-4" /> },
   { label: "Patients", path: "/admin/patients", icon: <Users className="h-4 w-4" /> },
   { label: "Services", path: "/admin/services", icon: <Settings className="h-4 w-4" /> },
-  { label: "Chats", path: "/admin/chats", icon: <MessageSquare className="h-4 w-4" /> },
+  { label: "Chats", path: "/admin/chats", icon: <MessageSquare className="h-4 w-4" />, chatNotify: true },
   { label: "Blogs", path: "/admin/blogs", icon: <FileText className="h-4 w-4" /> },
   { label: "FAQ", path: "/admin/faq", icon: <HelpCircle className="h-4 w-4" /> },
 ];
 
-function SidebarContent({ navItems, user, role, unreadCount, onClose, collapsed }) {
+function SidebarContent({ navItems, user, role, unreadCount, unreadChatCount, onClose, collapsed }) {
   const location = useLocation();
   const { signOut } = useAuth();
   const navigate = useNavigate();
+  const navRef = useRef(null);
+
+  // Restore sidebar scroll position on mount
+  useEffect(() => {
+    const saved = sessionStorage.getItem('sidebar-scroll');
+    if (saved && navRef.current) {
+      navRef.current.scrollTop = parseInt(saved, 10);
+    }
+  }, []);
+
+  // Save scroll position on scroll
+  const handleNavScroll = useCallback(() => {
+    if (navRef.current) {
+      sessionStorage.setItem('sidebar-scroll', String(navRef.current.scrollTop));
+    }
+  }, []);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
@@ -66,18 +84,21 @@ function SidebarContent({ navItems, user, role, unreadCount, onClose, collapsed 
         "p-6 border-b border-border flex items-center justify-between transition-all duration-300",
         collapsed && "px-4 justify-center"
       )}>
-        <Link to="/" className="flex items-center gap-3 group" onClick={onClose}>
-          <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20 group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
-            <Heart className="h-6 w-6 text-white" />
-          </div>
+        <Link to="/" className={cn(
+          "flex group px-2 w-full text-center",
+          collapsed ? "items-center justify-center" : "flex-col items-center justify-center gap-2"
+        )} onClick={onClose}>
+          <img src={Logo} alt="Logo" className={cn(
+            "transition-transform duration-300 flex-shrink-0 dark:invert",
+            collapsed ? "h-0 w-0" : "h-10 w-32"
+          )} />
           {!collapsed && (
             <motion.div
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="flex flex-col"
+              initial={{ opacity: 0, y: -5 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col mt-1"
             >
-              <span className="font-extrabold text-xl tracking-tighter text-foreground">LIONHS</span>
-              <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest leading-none">{role} Portal</p>
+              <p className="text-xs font-black uppercase text-primary tracking-widest leading-none drop-shadow-sm">{role} Portal</p>
             </motion.div>
           )}
         </Link>
@@ -89,9 +110,12 @@ function SidebarContent({ navItems, user, role, unreadCount, onClose, collapsed 
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto scrollbar-hide">
+      <nav ref={navRef} onScroll={handleNavScroll} className="flex-1 p-4 space-y-1.5 overflow-y-auto scrollbar-hide">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
+          const showNotify = (item.notify && unreadCount > 0) || (item.chatNotify && unreadChatCount > 0);
+          const count = item.notify ? unreadCount : (item.chatNotify ? unreadChatCount : 0);
+
           return (
             <Link
               key={item.path}
@@ -109,15 +133,17 @@ function SidebarContent({ navItems, user, role, unreadCount, onClose, collapsed 
               <div className={cn("p-2 rounded-lg transition-colors", isActive ? "bg-white/20" : "bg-transparent")}>
                 {item.icon}
               </div>
-              {!collapsed && <span className="flex-1">{item.label}</span>}
-              {item.notify && unreadCount > 0 && (
+
+              {showNotify && (
                 <span className={cn(
                   "bg-red-500 text-white text-[10px] font-black rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 transition-all",
                   collapsed ? "absolute top-1 right-1" : ""
                 )}>
-                  {unreadCount > 99 ? "99+" : unreadCount}
+                  {count > 99 ? "99+" : count}
                 </span>
               )}
+
+              {!collapsed && <span className="flex-1">{item.label}</span>}
             </Link>
           );
         })}
@@ -167,7 +193,17 @@ function SidebarContent({ navItems, user, role, unreadCount, onClose, collapsed 
 export default function DashboardLayout({ children, role }) {
   const { user } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    try { return localStorage.getItem('sidebar-collapsed') === 'true'; } catch { return false; }
+  });
+  const toggleCollapsed = () => {
+    setIsCollapsed(prev => {
+      const next = !prev;
+      try { localStorage.setItem('sidebar-collapsed', String(next)); } catch {}
+      return next;
+    });
+  };
+  const [unreadChatCount, setUnreadChatCount] = useState(0);
   const location = useLocation();
   const mainRef = useRef(null);
 
@@ -177,6 +213,25 @@ export default function DashboardLayout({ children, role }) {
       mainRef.current.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [location.pathname]);
+
+  // Fetch unread chats count (unique senders)
+  useEffect(() => {
+    const fetchUnreadChats = async () => {
+      if (!user) return;
+      try {
+        const response = await api.get("/chat/my-chats");
+        const chats = response.data || [];
+        const count = chats.filter(c => c.unreadCount > 0).length;
+        setUnreadChatCount(count);
+      } catch (err) {
+        console.error("Failed to fetch unread chats", err);
+      }
+    };
+
+    fetchUnreadChats();
+    const interval = setInterval(fetchUnreadChats, 30000); // Check every 30s
+    return () => clearInterval(interval);
+  }, [user]);
 
   // Try to use notifications context safely
   let unreadCount = 0;
@@ -208,7 +263,7 @@ export default function DashboardLayout({ children, role }) {
       )}>
         {/* Toggle Button for Desktop */}
         <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
+          onClick={toggleCollapsed}
           className="hidden lg:flex absolute -right-4 top-10 w-8 h-8 rounded-full bg-card border border-border items-center justify-center shadow-lg hover:bg-primary hover:text-white transition-all z-50"
         >
           {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
@@ -219,6 +274,7 @@ export default function DashboardLayout({ children, role }) {
           user={user}
           role={role}
           unreadCount={unreadCount}
+          unreadChatCount={unreadChatCount}
           onClose={() => setSidebarOpen(false)}
           collapsed={isCollapsed}
         />
@@ -235,10 +291,7 @@ export default function DashboardLayout({ children, role }) {
             <Menu className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 rounded-lg bg-primary flex items-center justify-center">
-              <Heart className="h-4 w-4 text-white" />
-            </div>
-            <span className="font-extrabold text-lg text-foreground">LIONHS</span>
+            <img src={Logo} alt="Logo" className="h-8 w-auto dark:invert" />
           </div>
           <ThemeToggle />
         </div>

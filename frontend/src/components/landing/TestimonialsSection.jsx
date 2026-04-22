@@ -4,12 +4,6 @@ import { Star, Quote } from "lucide-react";
 import { motion } from "framer-motion";
 import { AnimatedSectionHeader, StaggerContainer } from "./AnimatedSection";
 
-const fallbackTestimonials = [
-  { _id: "1", name: "Rajesh Kumar", message: "Excellent care and professional staff. The doctors were very attentive and explained everything clearly.", rating: 5, role: "Patient" },
-  { _id: "2", name: "Priya Sharma", message: "Clean facility with modern equipment. Very satisfied with the treatment and the follow-up care provided.", rating: 5, role: "Patient" },
-  { _id: "3", name: "Amit Patel", message: "Quick appointment booking and efficient service. Highly recommended for specialized heart care!", rating: 4, role: "Patient" },
-];
-
 const tiltReveal = {
   hidden: { opacity: 0, y: 40, rotate: -2, scale: 0.95 },
   visible: { opacity: 1, y: 0, rotate: 0, scale: 1, transition: { duration: 0.6, ease: "easeOut" } },
@@ -21,14 +15,15 @@ export default function TestimonialsSection() {
     queryFn: async () => {
       try {
         const response = await api.get("/content/testimonials");
-        return response.data && response.data.length > 0 ? response.data : fallbackTestimonials;
+        return response.data && response.data.length > 0 ? response.data : [];
       } catch (e) {
-        return fallbackTestimonials;
+        console.error("Failed to fetch testimonials:", e);
+        return [];
       }
     },
   });
 
-  const items = testimonials || fallbackTestimonials;
+  const items = testimonials || [];
 
   return (
     <section className="py-24 bg-muted relative overflow-hidden">

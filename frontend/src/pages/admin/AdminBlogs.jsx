@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { 
-  Plus, Search, FileText, Edit2, 
-  Trash2, Save, X, Loader2, Image as ImageIcon,
-  Calendar
+  Plus, Search, Edit2, 
+  Trash2, Save, X, Image as ImageIcon,
+  ExternalLink, Calendar, User
 } from "lucide-react";
+import HeartbeatLoader from "@/components/ui/HeartbeatLoader";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Card } from "@/components/ui/card";
@@ -78,7 +79,7 @@ export default function AdminBlogs() {
       <div className="max-w-6xl mx-auto space-y-10">
         <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div>
-            <h1 className="text-4xl font-black text-foreground tracking-tighter uppercase">Editorial <span className="text-secondary italic">Control</span> 📰</h1>
+            <h1 className="text-4xl font-black text-foreground tracking-tighter uppercase">Editorial <span className="text-secondary italic">Control</span></h1>
             <p className="text-muted-foreground font-medium mt-2">Publish medical insights and hospital announcements.</p>
           </div>
           <Button 
@@ -153,7 +154,7 @@ export default function AdminBlogs() {
                     </div>
                     <div className="flex items-center gap-4 pt-4">
                       <Button type="submit" className="h-14 px-10 rounded-2xl bg-secondary hover:bg-secondary/90 font-bold gap-3" disabled={createMutation.isPending}>
-                        {createMutation.isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                        {createMutation.isPending ? <HeartbeatLoader className="w-5 h-5" /> : <Save className="w-5 h-5" />}
                         Transmit Publication
                       </Button>
                       <Button type="button" variant="ghost" className="h-14 px-8 rounded-2xl font-bold" onClick={() => setIsAdding(false)}>
@@ -212,9 +213,8 @@ export default function AdminBlogs() {
         </div>
 
         {isLoading && (
-          <div className="flex flex-col items-center justify-center py-40 grayscale opacity-50">
-            <Loader2 className="w-12 h-12 animate-spin mb-4" />
-            <p className="font-black uppercase tracking-widest text-xs">Syncing Editorial Logs...</p>
+          <div className="text-center py-20 flex flex-col items-center justify-center">
+            <HeartbeatLoader />
           </div>
         )}
       </div>

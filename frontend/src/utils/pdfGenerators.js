@@ -15,11 +15,11 @@ export const generatePrescriptionPDF = (presc) => {
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(26);
     pdf.setFont("helvetica", "bold");
-    pdf.text("LIONHS Care Hospital", pageWidth / 2, 18, { align: "center" });
+    pdf.text("LIOHNS Care Hospital", pageWidth / 2, 18, { align: "center" });
     
     pdf.setFontSize(11);
     pdf.setFont("helvetica", "normal");
-    pdf.text("Excellence in Precision Healthcare • Est. 1998", pageWidth / 2, 26, { align: "center" });
+    pdf.text("Excellence in Precision Healthcare - Est. 1998", pageWidth / 2, 26, { align: "center" });
     
     pdf.setDrawColor(255, 255, 255);
     pdf.setLineWidth(0.5);
@@ -111,7 +111,7 @@ export const generatePrescriptionPDF = (presc) => {
       if (med.dosage?.evening) dosageParts.push("Evening");
       pdf.text(dosageParts.join(" - ") || "As directed", 90, y + 7);
       pdf.text(med.duration || "As directed", 140, y + 7);
-      pdf.text(med.mealTiming || "—", 165, y + 7);
+      pdf.text(med.mealTiming || "-", 165, y + 7);
 
       if (med.description) {
          pdf.setFontSize(7);
@@ -150,7 +150,7 @@ export const generatePrescriptionPDF = (presc) => {
     pdf.setTextColor(148, 163, 184);
     pdf.setFontSize(8);
     pdf.setFont("helvetica", "normal");
-    pdf.text("This is an electronically generated record from LIONHS Care Hospital Management System.", pageWidth / 2, footerY + 2, { align: "center" });
+    pdf.text("This is an electronically generated record from LIOHNS Care Hospital Management System.", pageWidth / 2, footerY + 2, { align: "center" });
     pdf.text("Verification Code: " + presc._id.toUpperCase(), pageWidth / 2, footerY + 7, { align: "center" });
 
     const blob = pdf.output('blob');
@@ -179,11 +179,11 @@ export const generateInvoicePDF = ({
     pdf.setTextColor(255, 255, 255);
     pdf.setFontSize(22);
     pdf.setFont("helvetica", "bold");
-    pdf.text("LIONHS Care Invoice", pageWidth / 2, 18, { align: "center" });
+    pdf.text("LIOHNS Care Invoice", pageWidth / 2, 18, { align: "center" });
     
     pdf.setFontSize(10);
     pdf.setFont("helvetica", "normal");
-    pdf.text("Electronic Billing Statement • Tax Invoice", pageWidth / 2, 26, { align: "center" });
+    pdf.text("Electronic Billing Statement - Tax Invoice", pageWidth / 2, 26, { align: "center" });
 
     pdf.setTextColor(30, 41, 59);
     pdf.setFontSize(10);
@@ -229,7 +229,7 @@ export const generateInvoicePDF = ({
     pdf.setDrawColor(226, 232, 240);
     pdf.line(15, 165, pageWidth - 15, 165);
     pdf.setFontSize(7);
-    pdf.text("Thank you for choosing LIONHS Care.", pageWidth / 2, 172, { align: "center" });
+    pdf.text("Thank you for choosing LIOHNS Care.", pageWidth / 2, 172, { align: "center" });
 
     const blob = pdf.output('blob');
     const blobUrl = URL.createObjectURL(blob);

@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { Phone, Video as VideoIcon, X, Loader2 } from "lucide-react";
+import { Phone, Video as VideoIcon, X } from "lucide-react";
+import HeartbeatLoader from "@/components/ui/HeartbeatLoader";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import useWebRTC from "@/hooks/useWebRTC";
@@ -136,7 +137,7 @@ export default function GlobalCallOverlay() {
           {!callAccepted && isCalling && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/40">
               <div className="bg-white/10 backdrop-blur-md px-8 py-4 rounded-3xl border border-white/10 flex items-center gap-4">
-                <Loader2 className="w-6 h-6 text-white animate-spin" />
+                <HeartbeatLoader size="sm" />
                 <span className="text-white font-bold">Calling...</span>
               </div>
             </div>

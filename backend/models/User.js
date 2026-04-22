@@ -11,10 +11,10 @@ const userSchema = new mongoose.Schema({
   avatarUrl: { type: String, default: '' },
   mustChangePassword: { type: Boolean, default: false },
   healthMetrics: {
-    bloodPressure: { type: String, default: '120/80' },
-    heartRate: { type: Number, default: 72 },
-    glucose: { type: Number, default: 90 },
-    temperature: { type: Number, default: 36.6 },
+    bloodPressure: { type: String, default: null },
+    heartRate: { type: Number, default: null },
+    glucose: { type: Number, default: null },
+    temperature: { type: Number, default: null },
     history: [{
       bloodPressure: String,
       heartRate: Number,

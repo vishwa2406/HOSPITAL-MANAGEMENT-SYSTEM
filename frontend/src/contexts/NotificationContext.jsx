@@ -1,11 +1,14 @@
 import { createContext, useContext, useState, useEffect, useCallback } from "react";
 import api from "@/services/api";
 import { useAuth } from "./AuthContext";
+import { useSocket } from "./SocketContext";
+import { toast } from "sonner";
 
 const NotificationContext = createContext(undefined);
 
 export function NotificationProvider({ children }) {
   const { user } = useAuth();
+  const { on, off } = useSocket();
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
@@ -22,10 +25,28 @@ export function NotificationProvider({ children }) {
 
   useEffect(() => {
     fetchNotifications();
-    // Poll every 60 seconds
-    const interval = setInterval(fetchNotifications, 60000);
+    
+    // Polling reduced to 5 minutes as a fallback
+    const interval = setInterval(fetchNotifications, 300000);
     return () => clearInterval(interval);
   }, [fetchNotifications]);
+
+  // Real-time listener
+  useEffect(() => {
+    const handleNewNotification = (notification) => {
+      console.log('New notification received via socket:', notification);
+      setNotifications(prev => [notification, ...prev]);
+      setUnreadCount(prev => prev + 1);
+      
+      // Visual feedback
+      toast(notification.title, {
+        description: notification.message,
+      });
+    };
+
+    on('new_notification', handleNewNotification);
+    return () => off('new_notification', handleNewNotification);
+  }, [on, off]);
 
   const markRead = async (id) => {
     try {

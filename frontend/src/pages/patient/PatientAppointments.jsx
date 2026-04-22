@@ -209,7 +209,7 @@ export default function PatientAppointments() {
                               <CalendarIcon className="w-3 h-3 mr-1" /> Reschedule
                             </Button>
                           ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
+                            <span className="text-xs text-muted-foreground">-</span>
                           )}
                         </td>
                         <td className="p-4">
@@ -218,8 +218,8 @@ export default function PatientAppointments() {
                               Paid
                             </span>
                           ) : (
-                            <Link to={`/patient/payment/${a._id}`}>
-                              <span className="text-[10px] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider bg-warning/10 text-warning hover:bg-warning/20 transition-colors cursor-pointer border border-warning/20">
+                            <Link to={`/patient/payment/${a._id}`} className="flex-shrink-0">
+                              <span className="text-[10px] px-2 py-1 rounded-full font-bold uppercase tracking-wider bg-warning/10 text-warning hover:bg-warning/20 transition-colors cursor-pointer border border-warning/20 whitespace-nowrap inline-block">
                                 Not Paid (Pay Now)
                               </span>
                             </Link>
@@ -227,13 +227,13 @@ export default function PatientAppointments() {
                         </td>
                         <td className="p-4">
                           {a.status === 'approved' || a.status === 'completed' ? (
-                            <Link to={`/chat/${a._id}`}>
+                            <Link to={`/chats/${a._id}`}>
                               <Button size="sm" variant="outline" className="h-7 text-[10px] px-2 text-primary">
                                 <MessageSquare className="w-3 h-3 mr-1" /> Chat
                               </Button>
                             </Link>
                           ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
+                            <span className="text-xs text-muted-foreground">-</span>
                           )}
                         </td>
                         <td className="p-4">
@@ -242,7 +242,7 @@ export default function PatientAppointments() {
                               <FileText className="w-3 h-3 mr-1" /> View Invoice
                             </Button>
                           ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
+                            <span className="text-xs text-muted-foreground">-</span>
                           )}
                         </td>
                         <td className="p-4">
@@ -251,7 +251,7 @@ export default function PatientAppointments() {
                               <Download className="w-3 h-3 mr-1" /> View Prescription
                             </Button>
                           ) : (
-                            <span className="text-xs text-muted-foreground">—</span>
+                            <span className="text-xs text-muted-foreground">-</span>
                           )}
                         </td>
                       </tr>
@@ -290,7 +290,8 @@ export default function PatientAppointments() {
                   <div className="flex gap-2 text-[9px] font-black uppercase tracking-tighter">
                     <div className="flex items-center gap-1"><div className="w-2 h-2 bg-green-500 rounded-full" />Available</div>
                     <div className="flex items-center gap-1"><div className="w-2 h-2 bg-red-500 rounded-full" />Booked</div>
-                    <div className="flex items-center gap-1"><div className="w-2 h-2 bg-amber-500 rounded-full" />Leave</div>
+                    <div className="flex items-center gap-1"><div className="w-2 h-2 bg-orange-500 rounded-full" />Unavailable</div>
+                    <div className="flex items-center gap-1"><div className="w-2 h-2 bg-sky-400 rounded-full" />Selected</div>
                   </div>
                 </div>
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
@@ -305,13 +306,13 @@ export default function PatientAppointments() {
                         className={cn(
                           "h-10 rounded-xl font-black text-xs transition-all duration-300 border flex items-center justify-center",
                           status === "available" && rescheduleData.time === t
-                            ? "bg-yellow-400 text-slate-900 border-yellow-500 shadow-sm"
+                            ? "bg-sky-400 text-white border-sky-500 shadow-sm"
                             : status === "available"
                             ? "bg-green-500 text-white border-green-600 hover:bg-green-600"
                             : status === "booked"
                             ? "bg-red-500 text-white border-red-600 cursor-not-allowed opacity-80"
                             : status === "unavailable"
-                            ? "bg-amber-500 text-white border-amber-600 cursor-not-allowed opacity-80"
+                            ? "bg-orange-500 text-white border-orange-600 cursor-not-allowed opacity-80"
                             : "bg-slate-100 text-slate-500 border-slate-300 cursor-not-allowed opacity-80"
                         )}
                       >

@@ -51,7 +51,7 @@ export default function ContactSection() {
         />
 
         <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-          {/* Left column — contact info */}
+          {/* Left column - contact info */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -74,7 +74,7 @@ export default function ContactSection() {
                 title: "Address",
                 lines: [
                   "Beside Sarva Mangal Hall, Near swami vivekanand Chowk",
-                  "Memnagar, Ahmedabad- 380052",
+                  "Memnagar, Ahmedabad - 380052",
                 ],
               },
             ].map((item, i) => (

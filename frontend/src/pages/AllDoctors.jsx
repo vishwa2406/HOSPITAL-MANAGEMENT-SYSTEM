@@ -40,7 +40,7 @@ export default function AllDoctors() {
           <div className="flex justify-start mb-6">
             <BackButton label="Back to Home" />
           </div>
-          <h1 className="text-4xl font-black text-foreground tracking-tight mb-4 lowercase">Our <span className="text-primary italic font-serif">specialists</span> 🩺</h1>
+          <h1 className="text-4xl font-black text-foreground tracking-tight mb-4 lowercase">Our <span className="text-primary italic font-serif">specialists</span></h1>
           <p className="text-muted-foreground font-medium max-w-xl mx-auto uppercase tracking-widest text-xs">A comprehensive directory of our expert medical team.</p>
           
           <div className="mt-10 max-w-xl mx-auto bg-card p-1.5 rounded-[2rem] shadow-lg shadow-primary/5 border border-border group focus-within:border-primary/30 transition-all duration-500">

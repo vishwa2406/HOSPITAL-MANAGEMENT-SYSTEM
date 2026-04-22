@@ -55,7 +55,7 @@ export default function AdminBilling() {
                 <td className="p-4 font-bold">{p.patientId?.fullName || "Patient"}</td>
                 <td className="p-4 font-bold text-primary">{p.doctorId?.userId?.fullName || "Doctor"}</td>
                 <td className="p-4 font-mono text-[10px] text-muted-foreground text-center">{p.transactionId}</td>
-                <td className="p-4 font-bold text-emerald-600 text-center">₹{p.amount?.toFixed(2)}</td>
+                <td className="p-4 font-bold text-emerald-600 text-center">Rs. {p.amount?.toFixed(2)}</td>
                 <td className="p-4 text-center">
                   <Button size="sm" variant="outline" className="h-8 text-xs font-bold" onClick={() => exportInvoice(p)}>
                     <Download className="w-3 h-3 mr-1" /> View Invoice

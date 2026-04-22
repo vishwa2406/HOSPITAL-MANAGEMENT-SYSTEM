@@ -11,7 +11,8 @@
     "seed:doctors": "node scripts/seedDoctor.js",
     "seed:blog": "node scripts/seedBlog.js",
     "seed:faq": "node scripts/seedFAQ.js",
-    "seed:service": "node scripts/seedService.js"
+    "seed:service": "node scripts/seedService.js",
+    "seed:all": "node scripts/seedAll.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

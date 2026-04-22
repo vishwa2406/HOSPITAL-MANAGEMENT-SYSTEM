@@ -128,7 +128,7 @@ export default function DoctorUnavailability() {
             animate={{ opacity: 1, x: 0 }}
             className="text-4xl font-black text-foreground tracking-tight"
           >
-            Leave <span className="text-primary italic">& Schedule</span> 🗓️
+            Leave <span className="text-primary italic">& Schedule</span>
           </motion.h1>
           <p className="text-muted-foreground font-medium mt-2">Easily manage your clinical blackouts so patients know when you aren't available.</p>
         </header>

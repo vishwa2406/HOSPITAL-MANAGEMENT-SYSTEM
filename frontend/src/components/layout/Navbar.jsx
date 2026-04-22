@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Menu, X, Phone, Heart } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import { motion, AnimatePresence } from "framer-motion";
+import Logo from "../../assets/Logo.png"
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -56,16 +57,7 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-4 flex items-center justify-between h-20">
         <a href="/" onClick={(e) => handleNavClick(e, "hero")} title="Home" className="flex items-center gap-2 group cursor-pointer">
-          <motion.div
-            whileHover={{ scale: 1.15, rotate: -5 }}
-            whileTap={{ scale: 0.95 }}
-            className="bg-primary p-1.5 rounded-xl shadow-lg shadow-primary/20"
-          >
-            <Heart className="h-6 w-6 text-white" />
-          </motion.div>
-          <span className="text-2xl font-bold tracking-tight text-foreground">
-            LIO<span className="text-primary">HNS</span>
-          </span>
+          <img src={Logo} alt="LIOHNS Logo" className="h-10 w-auto shadow-sm dark:invert group-hover:scale-105 transition-transform duration-300" />
         </a>
 
         <div className="hidden md:flex items-center gap-8">

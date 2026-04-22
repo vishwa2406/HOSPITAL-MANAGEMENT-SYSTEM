@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 export default function DoctorProfile() {
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const { toast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [newUnavail, setNewUnavail] = useState({ date: "", time: "09:00 AM" });
@@ -91,7 +91,7 @@ export default function DoctorProfile() {
       // Update AuthContext to reflect new avatar globally
       setUser(prev => ({ ...prev, avatarUrl: res.data.profileImage }));
       
-      toast({ title: "Profile Image Updated! 📸" });
+      toast({ title: "Profile Image Updated!" });
       await refetch();
     } catch (err) {
       toast({ title: "Upload Failed", description: err.message, variant: "destructive" });
@@ -139,7 +139,7 @@ export default function DoctorProfile() {
             animate={{ opacity: 1, x: 0 }}
             className="text-4xl font-black text-foreground tracking-tight"
           >
-            Physician <span className="text-primary italic">Profile</span> 👨‍⚕️
+            Physician <span className="text-primary italic">Profile</span>
           </motion.h1>
           <p className="text-muted-foreground font-medium mt-2">Maintain your professional clinical identity and credentials.</p>
         </header>
@@ -195,7 +195,7 @@ export default function DoctorProfile() {
               </div>
 
               <div className="space-y-4">
-                <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground ml-1">Consultation Fee (₹)</Label>
+                <Label className="text-[11px] font-black uppercase tracking-widest text-muted-foreground ml-1">Consultation Fee (Rs.)</Label>
                 <Input 
                   disabled={!isEditing} 
                   type="number"

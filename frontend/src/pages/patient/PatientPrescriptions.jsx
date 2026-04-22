@@ -7,6 +7,7 @@ import {
   Pill, Download, FileText, Activity, Clock,
   Search, Info, UtensilsCrossed, Loader2, Lock
 } from "lucide-react";
+import HeartbeatLoader from "@/components/ui/HeartbeatLoader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -50,7 +51,7 @@ export default function PatientPrescriptions() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-black text-foreground">My Prescriptions</h1>
-            <p className="text-muted-foreground text-sm mt-1">Your complete pharmaceutical history from LIONHS Care</p>
+            <p className="text-muted-foreground text-sm mt-1">Your complete pharmaceutical history from LIOHNS Care</p>
           </div>
           <div className="relative w-full md:w-72">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -65,9 +66,9 @@ export default function PatientPrescriptions() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {isLoading ? (
-            Array(4).fill(0).map((_, i) => (
-              <div key={i} className="h-64 bg-muted/50 animate-pulse rounded-3xl" />
-            ))
+            <div className="lg:col-span-2 flex justify-center py-20">
+              <HeartbeatLoader />
+            </div>
           ) : filteredPrescriptions?.length === 0 ? (
             <div className="lg:col-span-2 py-20 text-center bg-muted/20 rounded-3xl border-2 border-dashed border-border">
               <Pill className="w-14 h-14 text-muted-foreground/30 mx-auto mb-3" />
@@ -120,7 +121,7 @@ export default function PatientPrescriptions() {
                     className="rounded-xl h-9 px-4 text-xs font-bold gap-2 border-primary/20 text-primary hover:bg-primary/10"
                   >
                     {exportingId === presc._id ? (
-                      <Loader2 className="w-3 h-3 animate-spin" />
+                      <HeartbeatLoader size="sm" />
                     ) : (
                       <Download className="w-3 h-3" />
                     )}
@@ -148,7 +149,7 @@ export default function PatientPrescriptions() {
                         {med.dosage?.morning && <span className="flex items-center gap-1 bg-blue-500/10 text-blue-600 dark:text-blue-400 px-2.5 py-1 rounded-lg text-[10px] font-black"><Clock className="w-3 h-3" />Morning</span>}
                         {med.dosage?.noon && <span className="flex items-center gap-1 bg-orange-500/10 text-orange-600 dark:text-orange-400 px-2.5 py-1 rounded-lg text-[10px] font-black"><Clock className="w-3 h-3" />Noon</span>}
                         {med.dosage?.evening && <span className="flex items-center gap-1 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-2.5 py-1 rounded-lg text-[10px] font-black"><Clock className="w-3 h-3" />Evening</span>}
-                        {med.duration && <span className="bg-primary/10 text-primary px-2.5 py-1 rounded-lg text-[10px] font-black">📅 {med.duration}</span>}
+                        {med.duration && <span className="bg-primary/10 text-primary px-2.5 py-1 rounded-lg text-[10px] font-black">{med.duration}</span>}
                       </div>
                       {med.description && (
                         <p className="text-xs text-muted-foreground pl-2 border-l-2 border-muted-foreground/30">{med.description}</p>

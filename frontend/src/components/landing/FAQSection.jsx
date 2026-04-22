@@ -4,13 +4,6 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { HelpCircle } from "lucide-react";
 import { motion } from "framer-motion";
 
-const fallbackFaq = [
-  { id: "1", question: "What specialties does Lifecare Hospital provide?", answer: "We specialize in above-the-neck super specialty care, including ENT, Neurology, Neurosurgery, Oncosurgery, Ophthalmology, Dental Sciences, Dermatology, Plastic Surgery, Psychiatry, and Pulmonary medicine." },
-  { id: "2", question: "How can I book an appointment?", answer: "Appointments can be booked easily through Call on our helpline number or Visiting the hospital reception directly." },
-  { id: "3", question: "Do the hospital provides emergency services?", answer: "Yes, Lifecare Hospital offers 24x7 emergency care with specialized ICU support, neurosurgery backup, and ambulance facilities." },
-  { id: "4", question: "Does Lifecare Hospital accept health insurance?", answer: "Yes, we work with a wide range of health insurance providers and TPAs. Our billing team assists patients with claims and cashless hospitalization." },
-];
-
 const dropIn = {
   hidden: { opacity: 0, y: -15, scale: 0.98 },
   visible: (i) => ({
@@ -27,14 +20,15 @@ export default function FAQSection() {
     queryFn: async () => {
       try {
         const response = await api.get("/content/faq");
-        return response.data && response.data.length > 0 ? response.data : fallbackFaq;
+        return response.data && response.data.length > 0 ? response.data : [];
       } catch (e) {
-        return fallbackFaq;
+        console.error("Failed to fetch FAQ:", e);
+        return [];
       }
     },
   });
 
-  const items = faq || fallbackFaq;
+  const items = faq || [];
 
   return (
     <section id="faq" className="py-24 bg-background relative">

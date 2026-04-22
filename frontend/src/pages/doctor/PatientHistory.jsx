@@ -66,7 +66,7 @@ export default function PatientHistory() {
               animate={{ opacity: 1, x: 0 }}
               className="text-4xl font-black text-foreground tracking-tight"
             >
-              Clinical <span className="text-primary italic">Journals</span> 📁
+              Clinical <span className="text-primary italic">Journals</span>
             </motion.h1>
             <p className="text-muted-foreground font-medium mt-2">Comprehensive medical history and session archives.</p>
           </div>
@@ -184,7 +184,7 @@ export default function PatientHistory() {
                             <div className="space-y-3">
                                {presc.medicines.map((m, idx) => (
                                  <div key={idx} className="flex justify-between items-center text-sm p-3 bg-muted/30 rounded-xl">
-                                    <span className="font-bold text-foreground">💊 {m.name}</span>
+                                    <span className="font-bold text-foreground">Medication: {m.name}</span>
                                     <span className="text-[10px] font-black uppercase text-primary opacity-90"><UtensilsCrossed className="inline w-3 h-3 mr-1" />{m.mealTiming}</span>
                                  </div>
                                ))}

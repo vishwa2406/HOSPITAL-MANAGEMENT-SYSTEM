@@ -4,7 +4,8 @@ import { Service } from '../models/Content.js';
 
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/care-companion';
+const MONGODB_URI = process.env.MONGODB_URI;
+if (!MONGODB_URI) throw new Error("CRITICAL: MONGODB_URI is not defined in .env");
 
 const serviceData = [
   {
@@ -50,11 +51,21 @@ const seedService = async () => {
     await mongoose.connect(MONGODB_URI);
     console.log('Connected to MongoDB for Service seeding...');
 
+    /*
     await Service.deleteMany({});
     console.log('Cleared existing Service data.');
 
     await Service.insertMany(serviceData);
-    console.log('Successfully seeded Service data.');
+    */
+
+    for (const service of serviceData) {
+      await Service.updateOne(
+        { title: service.title },
+        { $set: service },
+        { upsert: true }
+      );
+    }
+    console.log('Successfully seeded/updated Service data.');
 
     process.exit(0);
   } catch (error) {

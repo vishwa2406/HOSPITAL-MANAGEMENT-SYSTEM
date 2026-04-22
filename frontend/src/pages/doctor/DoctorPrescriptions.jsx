@@ -114,7 +114,7 @@ export default function DoctorPrescriptions() {
             animate={{ opacity: 1, x: 0 }}
             className="text-4xl font-black text-foreground tracking-tight"
           >
-            Medical <span className="text-primary italic">Prescriptions</span> 💊
+            Medical <span className="text-primary italic">Prescriptions</span>
           </motion.h1>
           <p className="text-muted-foreground font-medium mt-2">Issue structured pharmaceutical records for completed consultations.</p>
         </header>
@@ -191,7 +191,7 @@ export default function DoctorPrescriptions() {
                                         <div>
                                             <DialogTitle className="text-2xl font-black text-foreground tracking-tight">Standardized Prescription</DialogTitle>
                                             <DialogDescription className="text-muted-foreground font-medium text-sm">
-                                              Case Ref: {appt._id.slice(-8).toUpperCase()} • Patient: {appt.patientId?.fullName}
+                                              Case Ref: {appt._id.slice(-8).toUpperCase()} - Patient: {appt.patientId?.fullName}
                                             </DialogDescription>
                                         </div>
                                       </div>

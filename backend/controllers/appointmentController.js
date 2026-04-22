@@ -5,6 +5,7 @@ import Unavailability from '../models/Unavailability.js';
 import Payment from '../models/Payment.js';
 import { sendEmail } from '../utils/email.js';
 import { createNotification } from './notificationController.js';
+import { getIO } from '../socket.js';
 import { 
   getNewAppointmentBookedEmail, 
   getRequestReceivedEmail, 
@@ -21,11 +22,12 @@ export const getAppointments = async (req, res) => {
       query.doctorId = doctor._id;
     }
     const appointments = await Appointment.find(query)
-      .populate('patientId', 'fullName email')
+      .populate('patientId', 'fullName email healthMetrics')
       .populate({
         path: 'doctorId',
         populate: { path: 'userId', select: 'fullName' }
-      });
+      })
+      .lean();
     res.json(appointments);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -42,13 +44,13 @@ export const getBookedSlots = async (req, res) => {
       doctorId,
       date,
       status: { $in: ['pending', 'approved', 'pending_reschedule'] }
-    }).select('time');
+    }).select('time').lean();
 
     const unavailabilities = await Unavailability.find({
       doctorId,
       startDate: { $lte: queryDate },
       endDate: { $gte: queryDate }
-    });
+    }).lean();
 
     const bookedSlots = appointments.map(a => a.time);
     const unavailableRanges = unavailabilities.map(u => ({
@@ -144,6 +146,12 @@ export const createAppointment = async (req, res) => {
       meta: { appointmentId: appointment._id }
     });
 
+    // Emit Socket Update for Admin and Doctor
+    try {
+      const io = getIO();
+      io.emit('data_updated', { type: 'appointments', doctorId: populatedAppt.doctorId._id });
+    } catch (sErr) {}
+
     // Fetch full doctor data to get email (User _id is inside populatedAppt.doctorId.userId)
     const doctorUser = await User.findById(populatedAppt.doctorId.userId._id);
 
@@ -210,6 +218,12 @@ export const updateAppointmentStatus = async (req, res) => {
       });
     }
 
+    // Real-time Update
+    try {
+      const io = getIO();
+      io.emit('data_updated', { type: 'appointments', appointmentId: appointment._id });
+    } catch (sErr) {}
+
     try {
       let title = `Appointment ${status.charAt(0).toUpperCase() + status.slice(1)}`;
       if (status === 'approved') title = "Appointment Approved";
@@ -246,7 +260,8 @@ export const getAdminAppointments = async (req, res) => {
         path: 'doctorId',
         populate: { path: 'userId', select: 'fullName' }
       })
-      .sort({ date: -1 });
+      .sort({ date: -1 })
+      .lean();
     res.json(appointments);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -261,7 +276,8 @@ export const getAdminRecentAppointments = async (req, res) => {
         populate: { path: 'userId', select: 'fullName' }
       })
       .sort({ createdAt: -1 })
-      .limit(5);
+      .limit(5)
+      .lean();
     res.json(appointments);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -367,7 +383,7 @@ export const rescheduleAppointment = async (req, res) => {
     appointment.status = 'pending_reschedule';
     await appointment.save();
 
-    // Notify the doctor about rescheduled request
+    // Notify the doctor
     await createNotification({
       userId: appointment.doctorId.userId._id,
       type: 'appointment_rescheduled',
@@ -384,6 +400,12 @@ export const rescheduleAppointment = async (req, res) => {
       message: `Your reschedule request to ${new Date(date).toLocaleDateString()} at ${time} with Dr. ${appointment.doctorId.userId.fullName} is pending approval.`,
       meta: { appointmentId: appointment._id }
     });
+
+    // Socket Update
+    try {
+      const io = getIO();
+      io.emit('data_updated', { type: 'appointments' });
+    } catch (sErr) {}
 
     res.json(appointment);
   } catch (error) {
@@ -427,6 +449,11 @@ export const payForAppointment = async (req, res) => {
       message: `Payment for your appointment on ${new Date(appointment.date).toLocaleDateString()} has been processed (Txn: ${transactionId}). Prescription is now unlocked.`,
       meta: { appointmentId: appointment._id }
     });
+
+    try {
+      const io = getIO();
+      io.emit('data_updated', { type: 'payments' });
+    } catch (sErr) {}
 
     res.json({ message: 'Payment successful', appointment, payment });
   } catch (error) {

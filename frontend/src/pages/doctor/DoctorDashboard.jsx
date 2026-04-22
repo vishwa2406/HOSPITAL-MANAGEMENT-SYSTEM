@@ -109,7 +109,7 @@ export default function DoctorDashboard() {
               animate={{ opacity: 1, x: 0 }}
               className="text-4xl font-black text-foreground tracking-tight"
             >
-              Doctor's <span className="text-primary italic">Command Center</span> 🩺
+              Doctor's <span className="text-primary italic">Command Center</span>
             </motion.h1>
             <p className="text-foreground/80 font-medium mt-2">Precision management for your medical practice.</p>
           </div>
@@ -128,7 +128,7 @@ export default function DoctorDashboard() {
             { label: "Pending Requests", value: pendingCount, icon: Clock, color: "text-orange-500", bg: "bg-orange-500/10", subtitle: "Awaiting Action" },
             { label: "Active Patients", value: approvedCount, icon: UserCheck, color: "text-blue-500", bg: "bg-blue-500/10", subtitle: "Scheduled Today" },
             { label: "Completed", value: totalCompleted, icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-500/10", subtitle: "Total Success" },
-            { label: "Earnings", value: `₹${historyEarnings + projectedEarnings}`, icon: DollarSign, color: "text-indigo-500", bg: "bg-indigo-500/10", subtitle: `${historyEarnings} History / ${projectedEarnings} Proj.` },
+            { label: "Earnings", value: `Rs. ${historyEarnings + projectedEarnings}`, icon: DollarSign, color: "text-indigo-500", bg: "bg-indigo-500/10", subtitle: `${historyEarnings} History / ${projectedEarnings} Proj.` },
           ].map((stat, i) => (
             <motion.div
               key={i}

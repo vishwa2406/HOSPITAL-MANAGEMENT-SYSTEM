@@ -75,7 +75,7 @@ export default function AdminPatients() {
       <div className="space-y-8">
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-             <h1 className="text-3xl font-black text-foreground tracking-tight">Patient <span className="text-primary italic">Directory</span> 👥</h1>
+             <h1 className="text-3xl font-black text-foreground tracking-tight">Patient <span className="text-primary italic">Directory</span></h1>
              <p className="text-muted-foreground font-medium">Manage hospital patient records and registrations.</p>
           </div>
           

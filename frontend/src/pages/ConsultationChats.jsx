@@ -17,6 +17,8 @@ import { format } from "date-fns";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import socket from "@/utils/socket";
+import { useParams, useNavigate } from "react-router-dom";
+import HeartbeatLoader from "@/components/ui/HeartbeatLoader";
 
 const downloadFile = (url, name) => {
   const link = document.createElement("a");
@@ -34,63 +36,65 @@ const MessageBubble = ({ m, isMe, onSelectMedia, onDownload }) => {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       className={`flex ${isMe ? "justify-end" : "justify-start"} mb-6 relative group`}
     >
-      <div className={`max-w-[85%] md:max-w-[70%] transition-colors duration-300 p-5 relative border ${
+      <div className={`max-w-[85%] md:max-w-[70%] transition-colors duration-300 p-0 relative border shadow-sm ${
         isMe 
-          ? "bg-primary text-primary-foreground rounded-t-[2rem] rounded-bl-[2rem] shadow-lg shadow-primary/10 border-primary" 
-          : "bg-card text-foreground rounded-t-[2rem] rounded-br-[2rem] border-border shadow-sm"
+          ? "bg-blue-600 text-white rounded-2xl shadow-lg shadow-blue-500/20 border-blue-500" 
+          : "bg-white text-slate-800 rounded-2xl border-slate-200 shadow-sm"
       }`}>
-        {m.type === "text" && <p className="text-sm font-medium leading-relaxed">{m.message}</p>}
+        {m.type === "text" && <div className="p-4"><p className="text-sm font-medium leading-relaxed">{m.message}</p></div>}
         
         {m.type === "image" && (
-          <div className="space-y-3">
-            <div className="relative rounded-2xl overflow-hidden cursor-zoom-in group/img border border-border/50" onClick={() => onSelectMedia(m)}>
-              <img src={m.fileUrl} alt="sent" className="w-full max-h-80 object-cover hover:scale-105 transition-transform duration-500" />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
-                <Maximize2 className="text-white w-8 h-8" />
+            <div className={`space-y-2 w-[220px] p-2 ${isMe ? "bg-white/5" : "bg-slate-50/50"}`}>
+              <div className="relative rounded-xl overflow-hidden cursor-zoom-in group/img border border-border/50" onClick={() => onSelectMedia(m)}>
+                <img src={m.fileUrl} alt="sent" className="w-full max-h-40 object-cover hover:scale-105 transition-transform duration-500" />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center">
+                   <Maximize2 className="text-white w-6 h-6" />
+                </div>
               </div>
+               <Button variant="outline" size="sm" className={`w-full rounded-xl border-border/20 text-[10px] h-8 transition-all ${isMe ? "bg-white/10 text-white hover:bg-white/20 border-white/10" : "bg-muted text-foreground hover:bg-muted/80"}`} onClick={() => onDownload(m.fileUrl, m.fileName)}>
+                 <Download className="w-3.5 h-3.5 mr-1.5" /> Download
+               </Button>
             </div>
-            <Button variant="outline" size="sm" className={`w-full rounded-xl text-xs h-10 ${isMe ? "bg-white/10 text-white hover:bg-white/20 border-white/20" : "bg-muted text-foreground hover:bg-muted/80 border-border"}`} onClick={() => onDownload(m.fileUrl, m.fileName)}>
-              <Download className="w-4 h-4 mr-2" /> Save Image
-            </Button>
-          </div>
         )}
 
         {m.type === "video" && (
-          <div className="space-y-3 min-w-[280px]">
-            <video controls className="w-full rounded-2xl bg-black shadow-lg">
-              <source src={m.fileUrl} />
-            </video>
-            <Button variant="outline" size="sm" className={`w-full rounded-xl text-xs h-10 ${isMe ? "bg-white/10 text-white hover:bg-white/20 border-white/20" : "bg-muted text-foreground hover:bg-muted/80 border-border"}`} onClick={() => onDownload(m.fileUrl, m.fileName)}>
-              <Download className="w-4 h-4 mr-2" /> Save Video
-            </Button>
-          </div>
+            <div className={`space-y-2 w-[220px] p-2 ${isMe ? "bg-white/5" : "bg-slate-50/50"}`}>
+              <video controls className="w-full rounded-xl bg-black shadow-xl max-h-40">
+                <source src={m.fileUrl} />
+              </video>
+               <Button variant="outline" size="sm" className={`w-full rounded-xl border-border/20 text-[10px] h-8 transition-all ${isMe ? "bg-white/10 text-white hover:bg-white/20 border-white/10" : "bg-muted text-foreground hover:bg-muted/80"}`} onClick={() => onDownload(m.fileUrl, m.fileName)}>
+                 <Download className="w-3.5 h-3.5 mr-1.5" /> Download
+               </Button>
+            </div>
         )}
 
-        {m.type === "pdf" && (
-          <div className={`flex flex-col gap-4 p-4 rounded-2xl border ${isMe ? "bg-white/10 border-white/20" : "bg-muted/50 border-border"}`}>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-xl bg-destructive flex items-center justify-center text-destructive-foreground shadow-lg">
-                <FileText className="w-6 h-6" />
+           {m.type === "pdf" && (
+            <div className={`flex flex-col gap-3 p-3 w-[220px] rounded-2xl ${isMe ? "bg-white/10" : "bg-slate-50/50"}`}>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#ef4444] shadow-md shadow-red-500/20 flex items-center justify-center text-white shrink-0">
+                  <FileText className="w-5 h-5" strokeWidth={2.5} />
+                </div>
+                <div className="flex-1 min-w-0">
+                   <p className={`font-black text-xs truncate leading-tight ${isMe ? "text-white" : "text-slate-800"}`}>{m.fileName || "document.pdf"}</p>
+                   <p className={`text-[9px] uppercase font-black tracking-widest mt-0.5 ${isMe ? "text-white/60" : "text-slate-500"}`}>PDF</p>
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <p className={`font-bold text-sm truncate ${isMe ? "text-white" : "text-foreground"}`}>{m.fileName || "document.pdf"}</p>
-                <p className={`text-[10px] uppercase font-black tracking-widest ${isMe ? "text-white/60" : "text-muted-foreground"}`}>PDF Document</p>
+              <div className="flex items-center justify-between gap-2">
+                 <Button variant="ghost" size="sm" className={`flex-1 h-9 rounded-xl text-[10px] font-black gap-1.5 transition-all ${isMe ? "text-white hover:bg-white/10" : "text-slate-700 hover:bg-slate-100"}`} onClick={() => window.open(m.fileUrl, '_blank')}>
+                   <Maximize2 className="w-3.5 h-3.5" /> Open
+                 </Button>
+                <Button size="sm" className={`flex-1 h-9 rounded-xl text-[10px] font-black gap-1.5 border-none shadow-sm transition-all ${isMe ? "bg-white/20 hover:bg-white/30 text-white" : "bg-blue-50 hover:bg-blue-100 text-blue-600"}`} onClick={() => onDownload(m.fileUrl, m.fileName)}>
+                  <Download className="w-3.5 h-3.5" /> Save
+                </Button>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-2">
-              <Button size="sm" variant="ghost" className={`rounded-xl h-10 text-xs font-bold gap-2 ${isMe ? "text-white hover:bg-white/10" : "text-foreground hover:bg-muted"}`} onClick={() => window.open(m.fileUrl, '_blank')}>
-                <Maximize2 className="w-4 h-4" /> Open
-              </Button>
-              <Button size="sm" className="rounded-xl h-10 text-xs font-bold gap-2 bg-primary/20 hover:bg-primary/30 text-primary border-none shadow-none" onClick={() => onDownload(m.fileUrl, m.fileName)}>
-                <Download className="w-4 h-4" /> Save
-              </Button>
-            </div>
-          </div>
-        )}
+          )}
 
-        <span className={`text-[9px] font-black uppercase tracking-widest mt-2 block opacity-80 ${isMe ? "text-right text-white/80" : "text-left text-slate-400"}`}>
-          {format(new Date(m.createdAt), 'hh:mm a')}
-        </span>
+        <div className="px-3 pb-2 flex justify-end">
+          <span className={`text-[9px] font-black uppercase tracking-widest opacity-80 ${isMe ? "text-white/80" : "text-slate-400"}`}>
+            {format(new Date(m.createdAt), 'hh:mm a')}
+          </span>
+        </div>
       </div>
     </motion.div>
   );
@@ -100,6 +104,8 @@ export default function ConsultationChats() {
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { appointmentId } = useParams();
+  const navigate = useNavigate();
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [msgInput, setMsgInput] = useState("");
@@ -118,6 +124,16 @@ export default function ConsultationChats() {
       return response.data || [];
     },
   });
+
+  // Handle auto-selection of chat basen on appointmentId
+  useEffect(() => {
+    if (appointmentId && chats?.length > 0) {
+      const chat = chats.find(c => 
+        (typeof c.appointmentId === 'object' ? c.appointmentId?._id === appointmentId : c.appointmentId === appointmentId)
+      );
+      if (chat) setSelectedChat(chat);
+    }
+  }, [appointmentId, chats]);
 
   const { data: initialMessages } = useQuery({
     queryKey: ["chat-messages", selectedChat?._id],
@@ -284,9 +300,13 @@ export default function ConsultationChats() {
              <div className="flex items-center justify-between">
                 <div>
                    <h2 className="text-xl font-black text-foreground tracking-tight flex items-center gap-2">
-                     Messages 
-                     {totalUnread > 0 && <span className="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full shadow-sm">{totalUnread}</span>}
-                   </h2>
+                    Messages 
+                    {totalUnread > 0 && (
+                      <span className="bg-red-500 text-white text-[10px] h-5 w-5 rounded-full flex items-center justify-center shadow-sm">
+                        {totalUnread}
+                      </span>
+                    )}
+                  </h2>
                 </div>
              </div>
              <div className="relative group">
@@ -302,8 +322,8 @@ export default function ConsultationChats() {
 
           <div className="flex-1 overflow-y-auto px-4 space-y-2 pb-8 custom-scrollbar">
              {chatsLoading ? (
-               <div className="flex flex-col items-center justify-center h-full text-slate-300">
-                  <Loader2 className="w-8 h-8 animate-spin" />
+               <div className="flex flex-col items-center justify-center h-full">
+                  <HeartbeatLoader />
                </div>
              ) : filteredChats?.length === 0 ? (
                <div className="text-center py-20">
@@ -375,23 +395,23 @@ export default function ConsultationChats() {
           ) : (
             <>
               {/* Header */}
-              <header className="px-8 py-5 flex items-center justify-between border-b border-border bg-card/50 backdrop-blur-md">
+              <header className="px-8 py-4 flex items-center justify-between border-b border-border bg-card shadow-sm">
                  <div className="flex items-center gap-4">
                     <Button variant="ghost" size="icon" className="md:hidden rounded-full" onClick={() => setSelectedChat(null)}>
                        <ChevronLeft className="w-6 h-6" />
                     </Button>
-                     <div className="w-12 h-12 rounded-xl bg-foreground text-background dark:bg-slate-800 dark:text-foreground flex items-center justify-center font-black text-xl shadow-lg">
+                     <div className="w-11 h-11 rounded-2xl bg-slate-950 text-white flex items-center justify-center font-black text-xl shadow-lg ring-4 ring-slate-950/5">
                        {getOtherParticipant(selectedChat)?.fullName?.charAt(0)}
                     </div>
                     <div>
-                       <h4 className="font-black text-foreground tracking-tight leading-tight">{getOtherParticipant(selectedChat)?.fullName}</h4>
+                       <h4 className="font-black text-slate-800 tracking-tight leading-tight">{getOtherParticipant(selectedChat)?.fullName}</h4>
                     </div>
                  </div>
                  <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" onClick={() => initGlobalCall('audio')}><Phone className="w-5 h-5" /></Button>
-                    <Button variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" onClick={() => initGlobalCall('video')}><VideoIcon className="w-5 h-5" /></Button>
+                    <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" onClick={() => initGlobalCall('audio')}><Phone className="w-5 h-5" /></Button>
+                    <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 text-slate-400 hover:text-primary hover:bg-primary/10 transition-colors" onClick={() => initGlobalCall('video')}><VideoIcon className="w-5 h-5" /></Button>
                     <div className="h-6 w-px bg-slate-100 mx-2" />
-                    <Button variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:text-destructive hover:bg-destructive/10 transition-colors" onClick={() => setSelectedChat(null)}><X className="w-5 h-5" /></Button>
+                    <Button variant="ghost" size="icon" className="rounded-xl h-10 w-10 text-slate-400 hover:text-destructive hover:bg-destructive/10 transition-colors" onClick={() => setSelectedChat(null)}><X className="w-5 h-5" /></Button>
                  </div>
               </header>
 
@@ -413,7 +433,7 @@ export default function ConsultationChats() {
                   >
                     <div className="flex items-center gap-3">
                        <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center text-primary shadow-sm border border-slate-100">
-                          {preview.loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 
+                          {preview.loading ? <HeartbeatLoader size="sm" /> : 
                            preview.type === 'pdf' ? <FileText className="w-5 h-5 text-red-500" /> : 
                            preview.type === 'video' ? <Video className="w-5 h-5 text-blue-500" /> : 
                            <ImageIcon className="w-5 h-5" />}

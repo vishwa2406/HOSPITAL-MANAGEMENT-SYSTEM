@@ -38,7 +38,7 @@ export default function AdminChats() {
       <div className="space-y-8 pb-10">
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h1 className="text-4xl font-black text-slate-900 tracking-tight">Communication <span className="text-primary italic">Surveillance</span> 🕵️‍♂️</h1>
+            <h1 className="text-4xl font-black text-slate-900 tracking-tight">Communication <span className="text-primary italic">Surveillance</span></h1>
             <p className="text-slate-500 font-medium mt-2">Monitor all doctor-patient interactions for quality assurance.</p>
           </div>
           
@@ -76,7 +76,7 @@ export default function AdminChats() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.05 }}
                 className="bg-card rounded-[2.5rem] border border-border p-8 shadow-2xl shadow-primary/5 hover:shadow-primary/10 hover:-translate-y-1 transition-all duration-300 group cursor-pointer"
-                onClick={() => navigate(`/chat/${chat.appointmentId._id}`)}
+                onClick={() => navigate(`/chats/${chat.appointmentId._id}`)}
               >
                 <div className="flex justify-between items-start mb-6">
                   <div className="flex -space-x-4">

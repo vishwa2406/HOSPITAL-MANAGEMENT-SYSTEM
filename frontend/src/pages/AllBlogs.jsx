@@ -37,7 +37,7 @@ export default function AllBlogs() {
           <BackButton label="Back to Home" className="mb-8" />
           <div className="max-w-3xl">
             <span className="text-secondary font-black tracking-[0.3em] uppercase text-xs mb-4 block">Medical Insights</span>
-            <h1 className="text-5xl md:text-6xl font-black text-foreground tracking-tighter leading-[0.9] uppercase">Health <span className="text-secondary italic font-serif lowercase">Knowledge</span> <br />Base 🧬</h1>
+            <h1 className="text-5xl md:text-6xl font-black text-foreground tracking-tighter leading-[0.9] uppercase">Health <span className="text-secondary italic font-serif lowercase">Knowledge</span> <br />Base</h1>
             <p className="text-muted-foreground font-medium mt-6 text-xl leading-relaxed">Expert articles, clinical updates, and health tips from our medical team.</p>
           </div>
           

@@ -58,11 +58,60 @@ export default function PatientDashboard() {
 
   const chartData = getConsultationData();
 
+  const calculateTrend = (actual, baseline) => {
+    if (!actual || isNaN(actual)) return "0%";
+    const diff = ((actual - baseline) / baseline) * 100;
+    const sign = diff >= 0 ? "+" : "";
+    return `${sign}${Math.round(diff)}%`;
+  };
+
+  const getBPValue = (bp) => {
+    if (!bp || bp === "NaN/NaN") return "NaN";
+    return bp;
+  };
+
+  const getBPTrend = (bp) => {
+    if (!bp || bp === "NaN/NaN") return "0%";
+    const systolic = parseInt(bp.split('/')[0]);
+    if (isNaN(systolic)) return "0%";
+    const diff = ((systolic - 120) / 120) * 100;
+    const sign = diff >= 0 ? "+" : "";
+    return `${sign}${Math.round(diff)}%`;
+  };
+
   const stats = [
-    { label: "Heart Rate", value: `${user?.healthMetrics?.heartRate || 72} bpm`, icon: Heart, color: "text-red-500", bg: "bg-red-500/10", trend: "+2%" },
-    { label: "Glucose", value: `${user?.healthMetrics?.glucose || 90} mg/dL`, icon: Droplets, color: "text-blue-500", bg: "bg-blue-500/10", trend: "-1%" },
-    { label: "Body Temp", value: `${user?.healthMetrics?.temperature || 36.6} °C`, icon: Thermometer, color: "text-orange-500", bg: "bg-orange-500/10", trend: "0%" },
-    { label: "Blood Pressure", value: user?.healthMetrics?.bloodPressure || "120/80", icon: Activity, color: "text-emerald-500", bg: "bg-emerald-500/10", trend: "+3%" },
+    { 
+      label: "Heart Rate", 
+      value: `${user?.healthMetrics?.heartRate ?? "NaN"} bpm`, 
+      icon: Heart, 
+      color: "text-red-500", 
+      bg: "bg-red-500/10", 
+      trend: calculateTrend(user?.healthMetrics?.heartRate, 72) 
+    },
+    { 
+      label: "Glucose", 
+      value: `${user?.healthMetrics?.glucose ?? "NaN"} mg/dL`, 
+      icon: Droplets, 
+      color: "text-blue-500", 
+      bg: "bg-blue-500/10", 
+      trend: calculateTrend(user?.healthMetrics?.glucose, 90) 
+    },
+    { 
+      label: "Body Temp", 
+      value: `${user?.healthMetrics?.temperature ?? "NaN"} deg C`, 
+      icon: Thermometer, 
+      color: "text-orange-500", 
+      bg: "bg-orange-500/10", 
+      trend: calculateTrend(user?.healthMetrics?.temperature, 36.6) 
+    },
+    { 
+      label: "Blood Pressure", 
+      value: getBPValue(user?.healthMetrics?.bloodPressure), 
+      icon: Activity, 
+      color: "text-emerald-500", 
+      bg: "bg-emerald-500/10", 
+      trend: getBPTrend(user?.healthMetrics?.bloodPressure) 
+    },
   ];
 
 
@@ -77,7 +126,12 @@ export default function PatientDashboard() {
               animate={{ opacity: 1, x: 0 }}
               className="text-4xl font-extrabold text-foreground tracking-tight"
             >
-              Welcome, <span className="text-primary">{user?.fullName?.split(' ')[0]}</span> 👋
+              Welcome, <span className="text-primary">{user?.fullName
+                ?.split(" ")[0]
+                ?.charAt(0)
+                ?.toUpperCase() +
+                user?.fullName?.split(" ")[0]?.slice(1)}</span>
+
             </motion.h1>
             <p className="text-foreground/80 font-medium mt-2">Check your health metrics and upcoming appointments.</p>
           </header>
@@ -180,7 +234,7 @@ export default function PatientDashboard() {
                           </div>
                         </div>
                         {appt.status === 'approved' && (
-                          <Link to={`/chat/${appt._id}`}>
+                          <Link to={`/chats/${appt._id}`}>
                             <Button className="w-full mt-6 h-12 rounded-2xl bg-primary text-white border-none hover:bg-primary/90 transition-all font-black text-xs gap-2 shadow-lg shadow-primary/20">
                                Start Consultation
                             </Button>

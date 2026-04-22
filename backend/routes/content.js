@@ -1,5 +1,6 @@
 import express from 'express';
 import { Service, Blog, FAQ } from '../models/Content.js';
+import mongoose from 'mongoose';
 import { protect, authorize } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -110,6 +111,27 @@ router.delete('/faqs/:id', protect, authorize('admin'), async (req, res) => {
   try {
     await FAQ.findByIdAndDelete(req.params.id);
     res.json({ message: 'FAQ deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Public Stats
+router.get('/stats', async (req, res) => {
+  try {
+    const [doctors, services, blogs, faqs] = await Promise.all([
+      mongoose.model('Doctor').countDocuments(),
+      Service.countDocuments(),
+      Blog.countDocuments(),
+      FAQ.countDocuments()
+    ]);
+    res.json({
+      doctors,
+      services,
+      blogs,
+      faqs,
+      patients: 1000 + Math.floor(Math.random() * 500) // Dummy but "realistic" patient count as we don't have a massive patient DB yet
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

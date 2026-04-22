@@ -42,7 +42,7 @@ export default function DoctorNotifications() {
               animate={{ opacity: 1, y: 0 }}
               className="text-4xl font-black text-foreground tracking-tight"
             >
-              Notifications 📡
+              Notifications
             </motion.h1>
             <p className="text-muted-foreground font-medium mt-2">Stay updated with your latest alerts and requests.</p>
           </div>

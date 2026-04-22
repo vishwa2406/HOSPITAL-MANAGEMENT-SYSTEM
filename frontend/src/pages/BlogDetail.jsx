@@ -19,6 +19,7 @@ import {
   TrendingUp
 } from "lucide-react";
 import { motion } from "framer-motion";
+import HeartbeatLoader from "@/components/ui/HeartbeatLoader";
 
 const fallbackBlogs = [
   { id: "1", title: "10 Tips for a Healthy Heart", content: "Regular exercise, balanced diet, and stress management are key to maintaining heart health in your daily routine. Cardiovascular diseases remain one of the leading causes of health issues globally, but the good news is that many can be prevented with simple lifestyle changes.\n\nFirst, prioritize movement. At least 30 minutes of moderate activity like brisk walking five days a week can significantly strengthen your heart. Second, watch your plate. Incorporate heart-healthy fats found in avocados and nuts while reducing sodium and trans fats found in processed foods.\n\nThird, manage stress. Chronic stress can lead to inflammation and high blood pressure, both of which are enemies of heart health. Try mindfulness, yoga, or simply spending time in nature.", image: "https://images.unsplash.com/photo-1505751172107-19598f4bc1e2?auto=format&fit=crop&q=80&w=1200", created_at: "2025-01-15", author: "Dr. Sarah Johnson" },
@@ -54,7 +55,7 @@ export default function BlogDetail() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+        <HeartbeatLoader />
       </div>
     );
   }
@@ -167,7 +168,7 @@ export default function BlogDetail() {
           <article className="flex-1">
             <div className="prose prose-slate lg:prose-xl dark:prose-invert max-w-none">
               <p className="text-lg md:text-xl text-muted-foreground leading-relaxed mb-8 font-medium italic border-l-4 border-primary pl-6">
-                LIONHS Care brings you the latest medical insights to help you lead a healthier, more vibrant life. 
+                LIOHNS Care brings you the latest medical insights to help you lead a healthier, more vibrant life. 
                 Our team of specialists curates this content to ensure you have access to reliable health education.
               </p>
               
@@ -192,7 +193,7 @@ export default function BlogDetail() {
                   </li>
                   <li className="flex items-start gap-3">
                     <div className="h-2 w-2 rounded-full bg-primary mt-2 flex-shrink-0" />
-                    <span>Always consult with a LIONHS specialist for personalized medical advice.</span>
+                    <span>Always consult with a LIOHNS specialist for personalized medical advice.</span>
                   </li>
                 </ul>
               </div>

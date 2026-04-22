@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "@/services/api";
 import { useAuth } from "@/contexts/AuthContext";
 import DashboardLayout from "@/components/layout/DashboardLayout";
@@ -47,11 +47,11 @@ export default function BookAppointment() {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [doctorId, setDoctorId] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [time, setTime] = useState("");
   const [notes, setNotes] = useState("");
-  const [loading, setLoading] = useState(false);
   const [showBlockedModal, setShowBlockedModal] = useState(false);
   const [searchParams] = useSearchParams();
   const preSelectedDoctorId = searchParams.get("doctor_id");
@@ -86,33 +86,42 @@ export default function BookAppointment() {
     }
   }, [slotData, date]);
 
-  const handleSubmit = async (e) => {
+  // Booking Mutation
+  const bookingMutation = useMutation({
+    mutationFn: async (appointmentData) => {
+      const response = await api.post("/appointments/appointments", appointmentData);
+      return response.data;
+    },
+    onSuccess: () => {
+      toast({ title: "Appointment Requested!", description: "You'll be notified once the doctor approves." });
+      queryClient.invalidateQueries({ queryKey: ["appointments"] });
+      queryClient.invalidateQueries({ queryKey: ["booked-slots"] });
+      navigate("/patient/appointments");
+    },
+    onError: (err) => {
+      toast({ title: "Failed to book", description: err.response?.data?.message || err.message, variant: "destructive" });
+    }
+  });
+
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!user || !time || !doctorId) {
       toast({ title: "Missing fields", description: "Please select a doctor, date and time.", variant: "destructive" });
       return;
     }
-    setLoading(true);
-    try {
-      await api.post("/appointments/appointments", {
-        doctorId,
-        appointmentDate: date,
-        appointmentTime: time,
-        notes,
-      });
-      toast({ title: "Appointment Requested! ✅", description: "You'll be notified once the doctor approves." });
-      navigate("/patient/appointments");
-    } catch (err) {
-      toast({ title: "Failed to book", description: err.response?.data?.message || err.message, variant: "destructive" });
-    } finally {
-      setLoading(false);
-    }
+    
+    bookingMutation.mutate({
+      doctorId,
+      appointmentDate: date,
+      appointmentTime: time,
+      notes,
+    });
   };
 
+  const loading = bookingMutation.isPending;
   const selectedDoctor = doctors?.find((d) => d._id === doctorId);
 
   const getSlotStatus = (slot) => {
-    // Check if slot is in the past (for today)
     const isToday = date === new Date().toISOString().split("T")[0];
     if (isToday) {
       const now = new Date();
@@ -136,9 +145,9 @@ export default function BookAppointment() {
             animate={{ opacity: 1, x: 0 }}
             className="text-3xl lg:text-4xl font-black text-foreground tracking-tight"
           >
-            Book <span className="text-primary italic">Consultation</span> ✨
+            Book <span className="text-primary italic">Consultation</span>
           </motion.h1>
-          <p className="text-muted-foreground font-medium mt-2 text-sm">Schedule your appointment with top-tier medical specialists. Available: 9:00 AM – 5:00 PM</p>
+          <p className="text-muted-foreground font-medium mt-2 text-sm">Schedule your appointment with top-tier medical specialists. Available: 9:00 AM - 5:00 PM</p>
         </header>
 
         <div className="grid lg:grid-cols-12 gap-8">
@@ -158,7 +167,7 @@ export default function BookAppointment() {
                   <SelectContent className="rounded-2xl border-border bg-card">
                     {doctors?.map((d) => (
                       <SelectItem key={d._id} value={d._id} className="rounded-xl text-sm">
-                        {d.userId?.fullName} — {d.specialization}
+                        {d.userId?.fullName} - {d.specialization}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -193,7 +202,8 @@ export default function BookAppointment() {
                     <div className="flex gap-3 text-[10px] font-black uppercase tracking-tighter">
                       <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-green-500 rounded-full" />Available</div>
                       <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-red-500 rounded-full" />Booked</div>
-                      <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-yellow-400 rounded-full" />Selected</div>
+                      <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-orange-500 rounded-full" />Unavailable</div>
+                      <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 bg-sky-400 rounded-full" />Selected</div>
                     </div>
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3">
@@ -208,11 +218,13 @@ export default function BookAppointment() {
                           className={cn(
                             "h-14 rounded-2xl font-black text-xs transition-all duration-300 border-2",
                             status === "available" && time === t
-                              ? "bg-yellow-400 text-slate-900 border-yellow-500 shadow-lg shadow-yellow-200 scale-105"
+                              ? "bg-sky-400 text-white border-sky-500 shadow-lg shadow-sky-200 scale-105"
                               : status === "available"
                               ? "bg-green-500 text-white border-green-600 hover:bg-green-600 hover:scale-102"
-                              : status === "booked" || status === "unavailable"
+                              : status === "booked"
                               ? "bg-red-500 text-white border-red-600 cursor-not-allowed opacity-80"
+                              : status === "unavailable"
+                              ? "bg-orange-500 text-white border-orange-600 cursor-not-allowed opacity-80"
                               : "bg-slate-100 text-slate-500 border-slate-300 cursor-not-allowed opacity-80"
                           )}
                         >
@@ -301,7 +313,7 @@ export default function BookAppointment() {
                   {selectedDoctor.consultationFee && (
                     <div className="mt-4 p-3 bg-muted/50 rounded-2xl">
                       <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest">Consultation Fee</p>
-                      <p className="text-lg font-black text-foreground">₹{selectedDoctor.consultationFee}</p>
+                      <p className="text-lg font-black text-foreground">Rs. {selectedDoctor.consultationFee}</p>
                     </div>
                   )}
                 </motion.div>

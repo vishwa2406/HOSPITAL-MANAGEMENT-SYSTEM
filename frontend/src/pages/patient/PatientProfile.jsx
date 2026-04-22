@@ -7,9 +7,10 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Edit3, Save, X, Activity, CheckCircle2, Camera, Loader2,
+  Edit3, Save, X, Activity, CheckCircle2, Camera,
   User, Mail, Phone, Calendar
 } from "lucide-react";
+import HeartbeatLoader from "@/components/ui/HeartbeatLoader";
 import api from "@/services/api";
 import InitialsAvatar from "@/components/ui/InitialsAvatar";
 
@@ -69,7 +70,7 @@ export default function PatientProfile() {
       });
       setUser({ ...user, ...res.data });
       setIsEditing(false);
-      toast({ title: "Profile Updated! ✅", description: "Your details have been saved successfully." });
+      toast({ title: "Profile Updated!", description: "Your details have been saved successfully." });
     } catch (err) {
       toast({ title: "Update Failed", description: err.response?.data?.message || err.message, variant: "destructive" });
     } finally {
@@ -101,7 +102,7 @@ export default function PatientProfile() {
       });
       setUser({ ...user, ...res.data });
       setAvatarPreview(res.data.avatarUrl);
-      toast({ title: "Photo Updated! 📸", description: "Your profile picture has been updated." });
+      toast({ title: "Photo Updated!", description: "Your profile picture has been updated." });
     } catch (err) {
       toast({ title: "Upload Failed", description: err.response?.data?.message || err.message, variant: "destructive" });
     } finally {
@@ -140,7 +141,7 @@ export default function PatientProfile() {
                   className="absolute inset-0 flex items-center justify-center bg-black/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                 >
                   {avatarLoading ? (
-                    <Loader2 className="w-7 h-7 text-white animate-spin" />
+                    <HeartbeatLoader />
                   ) : (
                     <Camera className="w-7 h-7 text-white" />
                   )}
@@ -250,7 +251,7 @@ export default function PatientProfile() {
                       disabled={loading}
                       className="rounded-2xl px-8 h-12 gap-2 bg-primary text-white font-bold shadow-lg shadow-primary/20"
                     >
-                      {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                      {loading ? <HeartbeatLoader /> : <Save className="w-4 h-4" />}
                       {loading ? "Saving..." : "Save Changes"}
                     </Button>
                   </motion.div>

@@ -1,13 +1,8 @@
 import { Shield, Clock, Award, Users, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { AnimatedSectionHeader, StaggerContainer, cardVariants } from "./AnimatedSection";
-
-const stats = [
-  { icon: <Users className="h-7 w-7" />, value: "50,000+", label: "Patients Treated", color: "bg-blue-500" },
-  { icon: <Award className="h-7 w-7" />, value: "100+", label: "Expert Doctors", color: "bg-emerald-500" },
-  { icon: <Clock className="h-7 w-7" />, value: "24/7", label: "Emergency Care", color: "bg-rose-500" },
-  { icon: <Shield className="h-7 w-7" />, value: "15+", label: "Years of Service", color: "bg-amber-500" },
-];
+import { useQuery } from "@tanstack/react-query";
+import api from "@/services/api";
 
 const listItemVariant = {
   hidden: { opacity: 0, x: -20 },
@@ -19,6 +14,26 @@ const listItemVariant = {
 };
 
 export default function AboutSection() {
+  const { data: dbStats } = useQuery({
+    queryKey: ["public-stats"],
+    queryFn: async () => {
+      try {
+        const response = await api.get("/content/stats");
+        return response.data;
+      } catch (e) {
+        console.error("Failed to fetch stats:", e);
+        return null;
+      }
+    },
+  });
+
+  const displayStats = [
+    { icon: <Users className="h-7 w-7" />, value: `${dbStats?.patients?.toLocaleString() || "1,000"}+`, label: "Patients Treated", color: "bg-blue-500" },
+    { icon: <Award className="h-7 w-7" />, value: `${dbStats?.doctors || "5"}+`, label: "Expert Doctors", color: "bg-emerald-500" },
+    { icon: <Clock className="h-7 w-7" />, value: "24/7", label: "Emergency Care", color: "bg-rose-500" },
+    { icon: <Shield className="h-7 w-7" />, value: "15+", label: "Years of Service", color: "bg-amber-500" },
+  ];
+
   return (
     <section id="about" className="py-24 bg-background overflow-hidden">
       <div className="container mx-auto px-4">
@@ -35,7 +50,7 @@ export default function AboutSection() {
               <span className="text-primary">Excellence & Innovation</span>
             </h2>
             <p className="text-foreground/70 text-lg mb-8 leading-relaxed">
-              At Life Care Hospital, we believe that healthcare is not merely about treating ailments, but about nurturing lives with compassion, precision, and innovation. Established with a commitment to deliver world-class healthcare solutions, we stand as one of Ahmedabad’s leading multi-specialty hospitals, trusted by patients and families alike.
+              At LIOHNS Hospital, we believe that healthcare is not merely about treating ailments, but about nurturing lives with compassion, precision, and innovation. Established with a commitment to deliver world-class healthcare solutions, we stand as one of Ahmedabad's leading multi-specialty hospitals, trusted by patients and families alike.
             </p>
             
             <ul className="space-y-4 mb-8">
@@ -113,7 +128,7 @@ export default function AboutSection() {
         </div>
 
         <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-8" stagger={0.12}>
-          {stats.map((s, i) => (
+          {displayStats.map((s, i) => (
             <motion.div 
               key={s.label}
               variants={cardVariants.fadeUp}

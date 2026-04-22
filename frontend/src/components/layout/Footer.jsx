@@ -1,5 +1,6 @@
 import { Heart, Phone, Mail, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
+import Logo from "../../assets/Logo.png";
 
 const footerColumnVariant = {
   hidden: { opacity: 0, y: 30 },
@@ -21,17 +22,11 @@ export default function Footer() {
           className="grid md:grid-cols-4 gap-8"
         >
           <motion.div custom={0} variants={footerColumnVariant}>
-            <div className="flex items-center gap-2 mb-4">
-              <motion.div
-                whileHover={{ scale: 1.1, rotate: -10 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <Heart className="h-6 w-6" />
-              </motion.div>
-              <span className="text-lg font-bold">LIOHNS Hospital</span>
+            <div className="flex items-center gap-3 mb-4">
+              <img src={Logo} alt="LIOHNS Logo" className="h-10 w-auto shadow-sm dark:invert" />
             </div>
             <p className="text-sm text-foreground/70">
-              Advanced Super Specialty Care for ENT, Neurology, Neurosurgery, Oncosurgery, Opthalmology, Dental sciences, Dermatology, Plastic Surgery, Psychiatry, Pulmonary and More…
+              Advanced Super Specialty Care for ENT, Neurology, Neurosurgery, Oncosurgery, Opthalmology, Dental sciences, Dermatology, Plastic Surgery, Psychiatry, Pulmonary and More...
             </p>
           </motion.div>
           <motion.div custom={1} variants={footerColumnVariant}>
@@ -57,7 +52,7 @@ export default function Footer() {
             <div className="space-y-2 text-sm text-foreground/70">
               <a href="tel:07935096700" className="flex items-center gap-2 hover:text-primary transition-colors"><Phone className="h-4 w-4" /> 079-35096700</a>
               <a href="mailto:liohnshospital748@gmail.com" className="flex items-center gap-2 hover:text-primary transition-colors"><Mail className="h-4 w-4" /> liohnshospital748@gmail.com</a>
-              <a href="https://maps.google.com/?q=Life+Care+Hospital+Memnagar+Ahmedabad" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-primary transition-colors"><MapPin className="h-4 w-4 shrink-0" /> Beside Sarva Mangal Hall, Memnagar, Ahmedabad- 380052</a>
+              <a href="https://maps.google.com/?q=Life+Care+Hospital+Memnagar+Ahmedabad" target="_blank" rel="noreferrer" className="flex items-center gap-2 hover:text-primary transition-colors"><MapPin className="h-4 w-4 shrink-0" /> Beside Sarva Mangal Hall, Memnagar, Ahmedabad - 380052</a>
             </div>
           </motion.div>
         </motion.div>

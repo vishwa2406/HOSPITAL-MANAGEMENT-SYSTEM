@@ -134,7 +134,7 @@ export default function AdminAppointments() {
                             <FileText className="w-3.5 h-3.5 mr-2 text-primary" /> View Invoice
                           </Button>
                         ) : (
-                          <span className="text-xs text-muted-foreground font-black">—</span>
+                          <span className="text-xs text-muted-foreground font-black">-</span>
                         )}
                       </div>
                     </td>
@@ -145,7 +145,7 @@ export default function AdminAppointments() {
                             <Download className="w-3.5 h-3.5 mr-2" /> View Prescription
                           </Button>
                         ) : (
-                          <span className="text-xs text-muted-foreground font-black">—</span>
+                          <span className="text-xs text-muted-foreground font-black">-</span>
                         )}
                       </div>
                     </td>
